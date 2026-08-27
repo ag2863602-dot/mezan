@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المدرّس — مِيزان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F0E4;--card:#FFFDF6;--ink:#16352A;--ink2:#4A6157;--red:#C6402E;--green:#1E7A50;--gold:#C9A227;--dark:#0E2A21;--line:rgba(22,53,42,.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--ink);background:var(--paper);
+ background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(22,53,42,.065) 34px 35px);line-height:1.7;min-height:100vh}
+h1,h2,h3{font-family:'Changa';line-height:1.3}
+.mono{font-family:'IBM Plex Mono',monospace}
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:24px}
+.noise{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.05;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.abar{background:var(--dark);color:var(--paper);border-bottom:2px solid var(--ink);padding:14px 0}
+.abar-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.abar .logo{font-family:'Changa';font-weight:800;font-size:24px;display:flex;align-items:center;gap:10px}
+.abar .logo svg{width:30px;height:30px}
+.mode-badge{background:var(--green);font-size:12.5px;padding:3px 14px;border-radius:99px;font-weight:700}
+.whoami{font-size:12px;color:var(--gold);border:1px dashed rgba(201,162,39,.6);padding:3px 12px;border-radius:99px}
+.abar .spacer{margin-inline-start:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.alink{border:1.5px solid rgba(246,240,228,.4);padding:8px 18px;border-radius:6px;font-size:14px;transition:.25s;color:var(--paper);text-decoration:none;font-weight:500;background:none;font-family:inherit;cursor:pointer}
+.alink:hover{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+.astats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:34px 0}
+.acard{background:var(--card);border:1.5px solid var(--ink);border-radius:6px;padding:18px 20px;box-shadow:5px 5px 0 rgba(22,53,42,.12)}
+.acard b{font-family:'Changa';font-weight:800;font-size:28px;display:block}
+.acard:nth-child(1) b{color:var(--red)}
+.acard:nth-child(2) b{color:var(--gold)}
+.acard:nth-child(3) b{color:var(--green)}
+.acard:nth-child(4) b{color:var(--ink)}
+.acard span{font-size:13.5px;color:var(--ink2)}
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 rgba(22,53,42,.13);margin-bottom:30px}
+.tp-head{display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:2px solid var(--ink);background:#F1E9D6;flex-wrap:wrap}
+.tp-head h3{font-size:20px}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{font-family:'Changa';font-size:14px;text-align:right;padding:12px 16px;border-bottom:2px solid var(--ink);background:var(--card);white-space:nowrap}
+td{padding:12px 16px;border-bottom:1.5px dashed var(--line);font-size:14px;vertical-align:middle}
+tr:hover td{background:rgba(201,162,39,.07)}
+.t-title{font-weight:700}
+.t-title small{display:block;font-weight:400;color:var(--ink2);font-size:12px;margin-top:2px}
+.tempty{text-align:center;padding:40px;color:var(--ink2);font-size:15px}
+.bank-card{padding:20px 24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.bank-card b{font-family:'IBM Plex Mono';font-size:18px;background:#F1E9D6;padding:6px 14px;border-radius:6px;border:1.5px dashed var(--ink)}
+.theme-btn{position:fixed;bottom:22px;left:22px;z-index:110;width:52px;height:52px;border-radius:99px;border:2px solid var(--ink);background:var(--card);font-size:22px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.3);transition:.25s}
+.theme-btn:hover{transform:translateY(-3px)}
+html.dark{--paper:#0F1713;--card:#15221B;--ink:#EAE5D7;--ink2:#9FB0A5;--line:rgba(234,229,215,.16)}
+html.dark body{background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(234,229,215,.05) 34px 35px)}
+html.dark .tp-head{background:#1B2C23}
+html.dark th{background:#1B2C23}
+html.dark .bank-card b{background:#1B2C23}
+@media(max-width:960px){.astats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.astats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script>if(localStorage.getItem('mz_theme')==='dark')document.documentElement.classList.add('dark');</script>
+<div class="noise" aria-hidden="true"></div>
+
+<header class="abar">
+  <div class="wrap abar-in">
+    <span class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="#F6F0E4" stroke-width="2.4" stroke-linecap="round"><path d="M20 5v28M8 12h24M8 12l-4 9a4.5 4.5 0 0 0 8 0l-4-9ZM32 12l-4 9a4.5 4.5 0 0 0 8 0l-4-9ZM12 33h16"/></svg>مِيزَان</span>
+    <span class="mode-badge">لوحة المدرّس 🎓</span>
+    <span class="whoami mono" id="whoami"></span>
+    <div class="spacer">
+      <a class="alink" href="index.html">المنصة ↗</a>
+      <button class="alink" id="logoutBtn" type="button">خروج ⎋</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="padding:30px 0 80px">
+  <section class="astats">
+    <div class="acard"><b id="tCourses">٠</b><span>كورساتي</span></div>
+    <div class="acard"><b id="tSales">٠</b><span>إجمالي المبيعات</span></div>
+    <div class="acard"><b id="tDue">٠</b><span>حقّي المستحق</span></div>
+    <div class="acard"><b id="tPercent">٠%</b><span>نسبتي</span></div>
+  </section>
+
+  <section class="panel">
+    <div class="tp-head"><h3>💳 حساب الاستقبال (هتحوّل عليه الإدارة)</h3></div>
+    <div class="bank-card"><span>الرقم/IBAN:</span><b id="tPayBox">—</b><span style="color:var(--ink2);font-size:13px">لتغييره تواصل مع الإدارة</span></div>
+  </section>
+
+  <section class="panel">
+    <div class="tp-head"><h3>📚 كورساتي</h3></div>
+    <div class="tscroll">
+      <table><thead><tr><th>الكورس</th><th>المستوى</th><th>السعر</th><th>عدد المشتركين</th></tr></thead><tbody id="cTbody"></tbody></table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="tp-head"><h3>🧾 سجل اشتراكات طلابي</h3><button class="alink" id="refreshBtn" type="button" style="margin-inline-start:auto">تحديث ↻</button></div>
+    <div class="tscroll">
+      <table><thead><tr><th>الطالب</th><th>الكورس/الباقة</th><th>المبلغ</th><th>حقّي</th><th>الحالة</th></tr></thead><tbody id="oTbody"></tbody></table>
+    </div>
+  </section>
+</main>
+
+<button class="theme-btn" id="themeBtn" aria-label="تبديل">🌙</button>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+  if(window.mzSync){window.mzSync(function(changed){
+    if(changed&&!sessionStorage.getItem('mz_reloaded')){sessionStorage.setItem('mz_reloaded','1');location.reload();}
+    else sessionStorage.removeItem('mz_reloaded');
+  });}
+  </script>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('ar-EG');
+
+function getStore(){try{return JSON.parse(localStorage.getItem('meezan_courses_v2')||'[]');}catch(e){return[];}}
+function getOrders(){try{return JSON.parse(localStorage.getItem('mz_orders')||'[]');}catch(e){return[];}}
+
+let myTeacher=null;
+
+function paint(){
+  if(!myTeacher)return;
+  $('#whoami').textContent='🎓 '+myTeacher.name;
+  $('#tPayBox').textContent=myTeacher.pay||'—';
+  $('#tPercent').textContent=fmt(myTeacher.percent||0)+'%';
+
+  /* كورساتي */
+  const mine=getStore().filter(c=>String(c.teacherId)===String(myTeacher.id));
+  $('#tCourses').textContent=fmt(mine.length);
+  $('#cTbody').innerHTML=mine.length?mine.map(c=>`<tr>
+    <td class="t-title">${c.title}<small>${c.cat}</small></td>
+    <td>${c.lvl}</td><td class="mono">${+c.price>0?fmt(c.price)+' ج.م':'مجاني'}</td>
+    <td class="mono">${fmt(c.students||0)}</td></tr>`).join('')
+    :'<tr><td colspan="4" class="tempty">مفيش كورسات مربوطه بيك لسه</td></tr>';
+
+  /* اشتراكات طلابي */
+  renderOrders(mine);
+}
+
+function renderOrders(mineCourses){
+  const allOrders=getOrders();
+  const mineIds=mineCourses.map(c=>+c.id);
+  const relevant=allOrders.filter(o=>{
+    if(o.email===window.ADMIN_EMAIL)return false;
+    const ids=(o.courseIds&&o.courseIds.length)?o.courseIds.map(Number):(o.courseId?[+o.courseId]:[]);
+    return ids.some(id=>mineIds.indexOf(id)>-1);
+  });
+
+  let totalSales=0,totalDue=0,activeCount=0;
+  $('#oTbody').innerHTML=relevant.length?relevant.map(o=>{
+    const ids=(o.courseIds&&o.courseIds.length)?o.courseIds.map(Number):(o.courseId?[+o.courseId]:[]);
+    const matched=ids.filter(id=>mineIds.indexOf(id)>-1);
+    const share=(+o.amount||0)/ids.length*matched.length;
+    const due=share*(myTeacher.percent||0)/100;
+    if(o.status==='active'){totalSales+=share;totalDue+=due;activeCount++;}
+    return `<tr>
+      <td class="mono">${o.email||''}</td>
+      <td class="t-title">${o.course||''}</td>
+      <td class="mono">${fmt(Math.round(share))} ج.م</td>
+      <td class="mono" style="color:var(--green);font-weight:700">${fmt(Math.round(due))} ج.م</td>
+      <td>${o.status==='active'?'<span style="color:var(--green);font-weight:700">مفعّل ✓</span>':(o.status==='cancelled'?'ملغي':'معلّق')}</td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="5" class="tempty">مفيش اشتراكات على كورساتك لسه</td></tr>';
+
+  $('#tSales').textContent=fmt(Math.round(totalSales))+' ج.م';
+  $('#tDue').textContent=fmt(Math.round(totalDue))+' ج.م';
+}
+
+$('#refreshBtn').onclick=paint;
+
+/* ===== حارس الدخول: المدرّس فقط ===== */
+if(window.MZ_AUTH){
+  MZ_AUTH.onAuthStateChanged(async function(u){
+    if(!u){ location.replace('login.html'); return; }
+    if(u.email.toLowerCase()===window.ADMIN_EMAIL){ location.replace('admin.html'); return; }
+    if(!window.MZ_DB){ location.replace('index.html'); return; }
+    try{
+      const snap=await MZ_DB.collection('teachers').where('email','==',u.email.toLowerCase()).get();
+      if(snap.empty){ location.replace('index.html'); return; }
+      snap.forEach(d=>{ myTeacher={id:d.id,...d.data()}; });
+      paint();
+    }catch(e){ console.warn(e); location.replace('index.html'); }
+  });
+}else{ location.replace('login.html'); }
+
+$('#logoutBtn').onclick=function(){ if(window.MZ_AUTH)MZ_AUTH.signOut().then(()=>location.replace('login.html')); };
+</script>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';}
+  b.onclick=function(){document.documentElement.classList.toggle('dark');localStorage.setItem('mz_theme',document.documentElement.classList.contains('dark')?'dark':'light');sync();};
+  sync();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة — مِيزان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F0E4;--card:#FFFDF6;--ink:#16352A;--ink2:#4A6157;--red:#C6402E;--green:#1E7A50;--gold:#C9A227;--dark:#0E2A21;--line:rgba(22,53,42,.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--ink);background:var(--paper);
+ background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(22,53,42,.065) 34px 35px);line-height:1.7;min-height:100vh}
+h1,h2,h3,h4{font-family:'Changa',sans-serif;line-height:1.3}
+.mono{font-family:'IBM Plex Mono',monospace}
+img{display:block}
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:24px}
+.noise{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.05;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+#dashWrap{display:none}
+body.authed #dashWrap{display:block}
+.abar{background:var(--dark);color:var(--paper);border-bottom:2px solid var(--ink);padding:14px 0}
+.abar-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.abar .logo{font-family:'Changa';font-weight:800;font-size:24px;display:flex;align-items:center;gap:10px}
+.abar .logo svg{width:30px;height:30px}
+.mode-badge{background:var(--red);font-size:12.5px;padding:3px 14px;border-radius:99px;font-weight:700}
+.whoami{font-size:12px;color:var(--gold);border:1px dashed rgba(201,162,39,.6);padding:3px 12px;border-radius:99px}
+.abar .spacer{margin-inline-start:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.alink{border:1.5px solid rgba(246,240,228,.4);padding:8px 18px;border-radius:6px;font-size:14px;transition:.25s;color:var(--paper);text-decoration:none;font-weight:500;background:none;font-family:inherit;cursor:pointer}
+.alink:hover{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+.astats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:34px 0}
+.acard{background:var(--card);border:1.5px solid var(--ink);border-radius:6px;padding:18px 20px;box-shadow:5px 5px 0 rgba(22,53,42,.12)}
+.acard b{font-family:'Changa';font-weight:800;font-size:32px;display:block;color:var(--red)}
+.acard:nth-child(2) b{color:var(--green)}
+.acard:nth-child(3) b{color:var(--gold)}
+.acard:nth-child(4) b{color:var(--ink)}
+.acard span{font-size:13.5px;color:var(--ink2)}
+.agrid{display:grid;grid-template-columns:420px 1fr;gap:30px;align-items:start;padding-bottom:40px}
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 rgba(22,53,42,.13)}
+.form-panel{position:sticky;top:24px;padding:24px}
+.form-panel h2{font-size:22px;border-bottom:4px double var(--ink);padding-bottom:12px;margin-bottom:18px}
+.form-panel h2 small{font-size:12px;color:var(--red);font-family:'IBM Plex Mono';display:block;font-weight:400}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+.field label i{font-style:normal;color:var(--red)}
+.field input,.field select{width:100%;border:2px solid var(--ink);border-radius:5px;padding:10px 12px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus{outline:3px solid rgba(201,162,39,.45)}
+.field input[type=file]{border:1.5px dashed var(--ink);background:#F1E9D6;padding:8px;border-radius:6px;cursor:pointer}
+.field .hint{font-size:11.5px;color:var(--ink2)}
+.form-actions{display:flex;gap:10px;margin-top:6px}
+.form-actions .btn{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Changa';font-weight:700;font-size:16px;
+ padding:11px 24px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--red);
+ transition:transform .2s,box-shadow .2s;border-radius:4px;cursor:pointer;text-decoration:none}
+.btn:hover{transform:translate(-2px,-3px);box-shadow:7px 7px 0 var(--red)}
+.btn.sm{padding:8px 18px;font-size:15px}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:4px 4px 0 rgba(22,53,42,.2)}
+.lessons-box{border-top:1.5px dashed var(--line);margin-top:6px;padding-top:14px}
+.lessons-box>label{font-size:14px;font-weight:700;display:block;margin-bottom:8px}
+.lessons-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.lrow-item{display:flex;align-items:center;gap:8px;background:#F1E9D6;border:1.5px solid var(--ink);border-radius:6px;padding:7px 12px;font-size:13px}
+.lrow-item b{color:var(--red)}
+.lrow-item .del{margin-inline-start:auto}
+.lempty{font-size:12.5px;color:var(--ink2);border:1.5px dashed var(--line);border-radius:6px;padding:8px;text-align:center}
+.lesson-add{display:grid;gap:8px}
+.lesson-add input{width:100%;border:2px solid var(--ink);border-radius:5px;padding:9px 12px;font-family:inherit;font-size:13px;background:#fff}
+.bcourses{display:flex;flex-wrap:wrap;gap:8px;max-height:230px;overflow-y:auto}
+.bcheck{display:flex;gap:6px;align-items:center;border:1.5px solid var(--ink);border-radius:6px;padding:6px 12px;font-size:13px;background:#fff;cursor:pointer}
+.bcheck input{accent-color:var(--red)}
+.preview{margin-top:22px;border-top:1.5px dashed var(--line);padding-top:16px}
+.preview h4{font-size:14px;color:var(--ink2);margin-bottom:12px;font-family:'IBM Plex Mono'}
+.pv-card{border:1.5px solid var(--ink);border-radius:6px;overflow:hidden;background:#fff}
+.pv-card img{width:100%;aspect-ratio:16/9;object-fit:cover;border-bottom:1.5px solid var(--ink)}
+.pv-body{padding:14px}
+.pv-meta{display:flex;justify-content:space-between;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--ink2);margin-bottom:6px}
+.pv-meta b{color:var(--red)}
+.pv-body h5{font-family:'Changa';font-size:17px;margin-bottom:6px;min-height:26px}
+.pv-price{font-family:'Changa';font-weight:800;font-size:21px}
+.pv-price s{font-size:13px;color:var(--ink2);font-family:'IBM Plex Mono';font-weight:400}
+.table-panel{padding:0;overflow:hidden}
+.tp-head{display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:2px solid var(--ink);background:#F1E9D6;flex-wrap:wrap}
+.tp-head h3{font-size:20px}
+.tp-head .cnt{font-family:'IBM Plex Mono';font-size:12.5px;background:var(--ink);color:var(--paper);padding:2px 12px;border-radius:99px}
+.tp-head input{margin-inline-start:auto;border:2px solid var(--ink);border-radius:6px;padding:8px 14px;font-family:inherit;font-size:13.5px;background:#fff;min-width:200px}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{font-family:'Changa';font-size:14px;text-align:right;padding:12px 16px;border-bottom:2px solid var(--ink);background:var(--card);white-space:nowrap}
+td{padding:12px 16px;border-bottom:1.5px dashed var(--line);font-size:14px;vertical-align:middle}
+tr:hover td{background:rgba(201,162,39,.07)}
+td img{width:74px;height:50px;object-fit:cover;border:1.5px solid var(--ink);border-radius:4px}
+.t-title{font-weight:700;max-width:280px}
+.t-title small{display:block;font-weight:400;color:var(--red);font-size:11.5px}
+.actions{display:flex;gap:8px;white-space:nowrap}
+.abtn{border:1.5px solid;border-radius:5px;background:none;font-family:'Changa';font-size:13px;font-weight:700;padding:5px 13px;transition:.2s;cursor:pointer}
+.abtn.edit{border-color:var(--gold);color:#8a6d10}
+.abtn.edit:hover{background:var(--gold);color:var(--dark)}
+.abtn.del{border-color:var(--red);color:var(--red)}
+.abtn.del:hover{background:var(--red);color:#fff}
+.tempty{text-align:center;padding:50px;color:var(--ink2);font-size:15px}
+.pad{padding:20px}
+.toasts{position:fixed;bottom:24px;right:50%;transform:translateX(50%);z-index:120;display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{background:var(--ink);color:var(--paper);padding:12px 24px;border-radius:6px;box-shadow:5px 5px 0 var(--gold);font-size:14.5px;animation:fadeUp .35s both;max-width:90vw;text-align:center}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.theme-btn{position:fixed;bottom:22px;left:22px;z-index:110;width:52px;height:52px;border-radius:99px;border:2px solid var(--ink);background:var(--card);font-size:22px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.3);transition:.25s}
+.theme-btn:hover{transform:translateY(-3px)}
+html.dark{--paper:#0F1713;--card:#15221B;--ink:#EAE5D7;--ink2:#9FB0A5;--line:rgba(234,229,215,.16)}
+html.dark body{background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(234,229,215,.05) 34px 35px)}
+html.dark .tp-head{background:#1B2C23}
+html.dark .tp-head input{background:#1B2C23;color:var(--ink)}
+html.dark .field input,html.dark .field select{background:#1B2C23;color:var(--ink)}
+html.dark .field input[type=file]{background:#122019}
+html.dark th{background:#1B2C23}
+html.dark .lrow-item,html.dark .bcheck{background:#1B2C23}
+html.dark .lesson-add input{background:#1B2C23;color:var(--ink)}
+@media(max-width:960px){.agrid{grid-template-columns:1fr}.form-panel{position:static}.astats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.astats{grid-template-columns:1fr}.frow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script>if(localStorage.getItem('mz_theme')==='dark')document.documentElement.classList.add('dark');</script>
+<div class="noise" aria-hidden="true"></div>
+
+<div id="dashWrap">
+<header class="abar">
+  <div class="wrap abar-in">
+    <span class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="#F6F0E4" stroke-width="2.4" stroke-linecap="round"><path d="M20 5v28M8 12h24M8 12l-4 9a4.5 4.5 0 0 0 8 0l-4-9ZM32 12l-4 9a4.5 4.5 0 0 0 8 0l-4-9ZM12 33h16"/></svg>مِيزَان</span>
+    <span class="mode-badge">وضع الإدارة ✎</span>
+    <span class="whoami mono" id="whoami"></span>
+    <div class="spacer">
+      <a class="alink" href="index.html">عرض المنصة ↗</a>
+      <button class="alink" id="logoutBtn" type="button">تسجيل الخروج ⎋</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="astats">
+    <div class="acard"><b id="sTotal">٠</b><span>إجمالي الكورسات</span></div>
+    <div class="acard"><b id="sHours">٠</b><span>ساعة تدريبية</span></div>
+    <div class="acard"><b id="sAvg">٠</b><span>متوسط السعر (ج.م)</span></div>
+    <div class="acard"><b id="sCats">٠</b><span>تخصصات نشطة</span></div>
+  </section>
+
+  <div class="agrid">
+    <form class="panel form-panel" id="cform" autocomplete="off">
+      <h2 id="formTitle">إضافة كورس جديد <small>بند جديد في دفتر المنصة</small></h2>
+      <div class="field"><label>عنوان الكورس <i>*</i></label><input type="text" id="fTitle" placeholder="مثال: محاسبة المطاعم والكافيهات"></div>
+      <div class="frow">
+        <div class="field"><label>التخصص <i>*</i></label><select id="fCat"><option>محاسبة مالية</option><option>ضرائب</option><option>مراجعة</option><option>Excel</option><option>تكاليف</option><option>ERP</option></select></div>
+        <div class="field"><label>المستوى <i>*</i></label><select id="fLvl"><option>مبتدئ</option><option>متوسط</option><option>متقدم</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>عدد الساعات <i>*</i></label><input type="number" id="fHours" min="1" value="10"></div>
+        <div class="field"><label>عدد الدروس <i>*</i></label><input type="number" id="fLessons" min="1" value="30"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>السعر (ج.م) <i>*</i></label><input type="number" id="fPrice" min="0" value="499"><span class="hint">اكتب ٠ لو مجاني</span></div>
+        <div class="field"><label>السعر قبل الخصم</label><input type="number" id="fOld" min="0" value="0"></div>
+      </div>
+      <div class="field"><label>اسم المدرّب <i>*</i></label><input type="text" id="fInst" placeholder="مثال: أ. محمد سامي"></div>
+      <div class="field"><label>المدرّس المرتبط (لتقسيم الأرباح)</label><select id="fTeacher"><option value="">— بدون —</option></select><span class="hint">اختياره بيكتب الاسم تلقائيًا وبيربط الكورس بنسبة المدرّس</span></div>
+      <div class="field"><label>صورة الكورس من جهازك 📁</label><input type="file" id="fImgFile" accept="image/*"><span class="hint">بتتضغط وتترفع على Firebase Storage</span></div>
+      <div class="field"><label>أو رابط صورة</label><input type="url" id="fImg" placeholder="https://..."></div>
+      <div class="field"><label>رابط الفيديو (يوتيوب أو mp4)</label><input type="url" id="fVideo" placeholder="https://youtube.com/..."><span class="hint">اختياري — بيظهر لو مفيش حصص</span></div>
+      <div class="field"><label>رابط التطبيق العملي</label><input type="url" id="fPractical" placeholder="https://..."></div>
+      <div class="field"><label>لينك مقابلة العمل</label><input type="url" id="fInterview" placeholder="https://..."><span class="hint">اختياري — زر «مقابلة عمل» تحت الفيديو</span></div>
+      <div class="field"><label>لينك تنزيل البيانات</label><input type="url" id="fResources" placeholder="https://drive.google.com/..."><span class="hint">اختياري — زر «تنزيل البيانات» (Google Drive / Dropbox / رابط مباشر)</span></div>
+      <div class="frow">
+        <div class="field"><label>شارة (اختياري)</label><input type="text" id="fBadge" placeholder="جديد / خصم خاص"></div>
+        <div class="field"><label>لون الشارة</label><select id="fGold"><option value="">أحمر</option><option value="1">ذهبي</option></select></div>
+      </div>
+      <div class="lessons-box">
+        <label>📚 الحصص <span class="hint" style="font-weight:400">(كل حصة ليها فيديو وتطبيق)</span></label>
+        <div class="lessons-list" id="lessonsList"></div>
+        <div class="lesson-add">
+          <input type="text" id="lTitle" placeholder="عنوان الحصة — مثال: الحصة ١: مقدمة القيود">
+          <input type="url" id="lVideo" placeholder="لينك فيديو الحصة">
+          <input type="url" id="lPractical" placeholder="لينك التطبيق العملي (اختياري)">
+          <button type="button" class="btn sm" id="addLessonBtn">+ إضافة الحصة</button>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn" id="saveBtn">حفظ الكورس في المنصة +</button>
+        <button type="button" class="btn ghost" id="resetBtn" style="display:none">إلغاء التعديل</button>
+      </div>
+      <div class="preview">
+        <h4>▚ معاينة حيّة — هكذا سيظهر في المنصة</h4>
+        <div class="pv-card">
+          <img id="pvImg" src="https://picsum.photos/seed/meezan-preview/600/380" alt="معاينة">
+          <div class="pv-body">
+            <div class="pv-meta"><b id="pvCat">محاسبة مالية</b><span id="pvLvl">المستوى: مبتدئ</span></div>
+            <h5 id="pvTitle">عنوان الكورس يظهر هنا…</h5>
+            <div class="pv-meta"><span id="pvInfo">⏱ ١٠ ساعة · ✎ ٣٠ درسًا</span></div>
+            <div class="pv-price" id="pvPrice">٤٩ ج.م</div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <section class="panel table-panel">
+      <div class="tp-head">
+        <h3>الكورسات المسجّلة</h3><span class="cnt" id="tableCnt">٠</span>
+        <input type="search" id="tSearch" placeholder="⌕ بحث في الجدول…">
+      </div>
+      <div class="tscroll">
+        <table><thead><tr><th>الصورة</th><th>العنوان</th><th>التخصص</th><th>المستوى</th><th>السعر</th><th>المدرّب</th><th>إجراءات</th></tr></thead><tbody id="tbody"></tbody></table>
+        <div class="tempty" id="tempty" style="display:none">مفيش كورسات — أضف أول كورس من الفورم ✎</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:10px">
+    <div class="tp-head"><h3>📦 إدارة الاشتراك المجمع</h3></div>
+    <div class="pad">
+      <div class="frow">
+        <div class="field"><label>اسم الباقة *</label><input type="text" id="bTitle" placeholder="مثال: باقة التأسيس الشاملة"></div>
+        <div class="field"><label>السعر *</label><input type="number" id="bPrice" min="0" value="1499"></div>
+        <div class="field"><label>السعر قبل الخصم</label><input type="number" id="bOld" min="0" value="0"></div>
+      </div>
+      <div class="field"><label>الكورسات المشمولة</label><div class="bcourses" id="bCourses"></div></div>
+      <div class="form-actions">
+        <button type="button" class="btn" id="bSave">حفظ الباقة +</button>
+        <button type="button" class="btn ghost" id="bCancel" style="display:none">إلغاء التعديل</button>
+      </div>
+      <div class="tscroll" style="margin-top:18px">
+        <table><thead><tr><th>الباقة</th><th>السعر</th><th>الكورسات</th><th>إجراءات</th></tr></thead><tbody id="bTbody"></tbody></table>
+      </div>
+    </div>
+  </section>
+  <section class="panel" style="margin-top:30px">
+    <div class="tp-head"><h3>💼 إدارة الوظائف المتاحة</h3></div>
+    <div class="pad">
+      <div class="field"><label>المسمى الوظيفي *</label><input type="text" id="jTitle" placeholder="مثال: محاسب مالي — شركة مقاولات"></div>
+      <div class="frow">
+        <div class="field"><label>الموقع</label><input type="text" id="jLoc" placeholder="القاهرة"></div>
+        <div class="field"><label>نوع الدوام</label><input type="text" id="jType" placeholder="دوام كامل / هايبرد"></div>
+      </div>
+      <div class="field"><label>الراتب</label><input type="text" id="jSalary" placeholder="٨٬٠٠٠ – ١٢٬٠٠٠ ج.م أو حسب الخبرة"></div>
+      <div class="field"><label>صورة من جهازك 📁</label><input type="file" id="jImgFile" accept="image/*"></div>
+      <div class="field"><label>أو رابط صورة</label><input type="url" id="jImg" placeholder="https://..."></div>
+      <div class="field"><label>رقم الواتساب</label><input type="text" id="jWa" placeholder="01xxxxxxxxx"><span class="hint">لو مكتوب → هيظهر زر واتساب يفتح محادثة مباشرة (الكود بيتضاف تلقائيًا)</span></div>
+      <div class="field"><label>لينك تواصل (اختياري)</label><input type="url" id="jContact" placeholder="https://... إيميل / فورم / أي لينك"><span class="hint">لو مكتوب → هيظهر زر «تواصل وقدّم»</span></div>
+      <div class="form-actions">
+        <button type="button" class="btn" id="jSave">حفظ الوظيفة +</button>
+        <button type="button" class="btn ghost" id="jCancel" style="display:none">إلغاء التعديل</button>
+      </div>
+      <div class="tscroll" style="margin-top:18px">
+        <table><thead><tr><th>الوظيفة</th><th>الموقع</th><th>الراتب</th><th>التواصل</th><th>إجراءات</th></tr></thead><tbody id="jTbody"></tbody></table>
+      </div>
+    </div>
+  </section>
+  <section class="panel" style="margin-top:30px">
+    <div class="tp-head"><h3>👥 إدارة المدرّسين</h3></div>
+    <div class="pad">
+      <div class="frow">
+        <div class="field"><label>اسم المدرّس *</label><input type="text" id="tName" placeholder="مثال: أ. محمد سامي"></div>
+        <div class="field"><label>نسبة المدرّس ٪ *</label><input type="number" id="tPercent" min="0" max="100" value="70"></div>
+      </div>
+    </div>
+    <div class="field"><label>إيميل المدرّس *</label><input type="email" id="tEmail" placeholder="teacher@gmail.com"><span class="hint">المدرّس هيسجل دخول بالإيميل ده ويشوف لوحة تحكمه</span></div>
+    <div class="field"><label>حساب الاستقبال (فودافون / IBAN) *</label><input type="text" id="tPay" placeholder="01xxxxxxxxx أو EG1234..."></div>
+      <div class="form-actions">
+        <button type="button" class="btn" id="tSave">حفظ المدرّس +</button>
+        <button type="button" class="btn ghost" id="tCancel" style="display:none">إلغاء التعديل</button>
+      </div>
+      <div class="tscroll" style="margin-top:18px">
+        <table><thead><tr><th>المدرّس</th><th>نسبته</th><th>حساب الاستقبال</th><th>إجراءات</th></tr></thead><tbody id="tTbody"></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:30px">
+    <div class="tp-head"><h3>💰 تقسيم الإيرادات (الاشتراكات المفعّلة)</h3></div>
+    <div class="tscroll">
+      <table><thead><tr><th>المدرّس</th><th>مبيعات كورساته</th><th>حق المدرّس</th><th>حق المنصة</th><th>التحويل على</th></tr></thead>
+      <tbody id="fTbody"></tbody><tfoot id="finTotal"></tfoot></table>
+    </div>
+    <p class="hint" style="padding:12px 20px">الحساب على الطلبات المفعّلة فقط: مبلغ الباقة بيتقسم بالتساوي على كورساتها، وكل كورس بيحسب نسبته لمدرّسه والباقي ليك.</p>
+  </section>
+  </section>
+  <div class="tp-head"><h3>⚙ إعدادات Paymob (التفعيل التلقائي)</h3></div>
+  <div class="pad">
+    <div class="field"><label>API Key *</label><input type="text" id="pmKey" placeholder="من Developers → API Keys"></div>
+    <div class="frow">
+      <div class="field"><label>Integration ID — بطاقات</label><input type="text" id="pmCard" placeholder="رقم التكامل"></div>
+      <div class="field"><label>Integration ID — محافظ</label><input type="text" id="pmWallet" placeholder="رقم التكامل"></div>
+    </div>
+    <div class="frow">
+      <div class="field"><label>Integration ID — فوري</label><input type="text" id="pmFawry" placeholder="رقم التكامل"></div>
+      <div class="field"><label>HMAC Secret (اختياري)</label><input type="text" id="pmHmac" placeholder="لتأمين توقيع الدفع"></div>
+    </div>
+    <div class="form-actions"><button type="button" class="btn" id="pmSave">حفظ إعدادات الدفع ✓</button></div>
+    <p class="hint" style="margin-top:10px">بتتحفظ أونلاين في Firestore — صفحة الدفع عند أي طالب بتقرأها لوحدها تلقائيًا.</p>
+  </div>
+</section>
+  <section class="panel" style="margin-top:30px">
+    <div class="tp-head"><h3>🔗 لينكات السوشيال (أيقونات الفوتر)</h3></div>
+    <div class="pad">
+      <div class="frow">
+        <div class="field"><label>فيسبوك</label><input type="url" id="sFacebook" placeholder="https://facebook.com/..."></div>
+        <div class="field"><label>انستجرام</label><input type="url" id="sInstagram" placeholder="https://instagram.com/..."></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>لينكدإن</label><input type="url" id="sLinkedin" placeholder="https://linkedin.com/company/..."></div>
+        <div class="field"><label>يوتيوب</label><input type="url" id="sYoutube" placeholder="https://youtube.com/@..."></div>
+      </div>
+      <div class="form-actions"><button type="button" class="btn" id="sSave">حفظ اللينكات ✓</button></div>
+      <p class="hint" style="margin-top:10px">سيب أي خانة فاضية → الأيقونة بتاعتها هتفضل من غير لينك.</p>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:30px;margin-bottom:80px">
+    <div class="tp-head"><h3>🧾 طلبات الاشتراك — التفعيل</h3><span style="margin-inline-start:auto;display:flex;gap:8px"><button class="alink" id="resetDeviceBtn" type="button">فك ربط جهاز ♻</button><button class="alink" id="refreshOrders" type="button">تحديث ↻</button></span></div>
+    <div class="tscroll">
+      <table><thead><tr><th>البريد</th><th>الطلب</th><th>المبلغ</th><th>الطريقة</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="oTbody"></tbody></table>
+      <div class="tempty" id="oEmpty" style="display:none">مفيش طلبات لسه</div>
+    </div>
+  </section>
+</main>
+</div>
+
+<button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع">🌙</button>
+<div class="toasts" id="toasts"></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('ar-EG');
+const KEY = 'meezan_courses_v2';
+const BKEY = 'meezan_bundles_v1';
+
+const DEFAULTS=[
+ {id:1,title:'أساسيات القيد المزدوج من الصفر',cat:'محاسبة مالية',lvl:'مبتدئ',hours:12,lessons:45,students:4200,rating:'٤٫٩',reviews:1240,price:499,old:799,inst:'أ. محمد سامي',img:'https://picsum.photos/seed/ledger-double-entry-course/600/380',badge:'الأكثر مبيعًا'},
+ {id:2,title:'القوائم المالية: من اليومية للميزانية',cat:'محاسبة مالية',lvl:'متوسط',hours:16,lessons:58,students:2600,rating:'٤٫٨',reviews:860,price:649,old:0,inst:'د. هالة يوسف',img:'https://picsum.photos/seed/financial-statements-course/600/380'},
+ {id:3,title:'ضريبة القيمة المضافة عمليًا',cat:'ضرائب',lvl:'متوسط',hours:10,lessons:36,students:1900,rating:'٤٫٧',reviews:540,price:599,old:0,inst:'أ. كريم عادل',img:'https://picsum.photos/seed/vat-tax-course/600/380'},
+ {id:4,title:'الإقرار الضريبي خطوة بخطوة',cat:'ضرائب',lvl:'متقدم',hours:8,lessons:24,students:1450,rating:'٤٫٩',reviews:610,price:749,old:0,inst:'أ. كريم عادل',img:'https://picsum.photos/seed/tax-return-course/600/380'},
+ {id:5,title:'المراجعة الداخلية والرقابة والحوكمة',cat:'مراجعة',lvl:'متقدم',hours:14,lessons:40,students:980,rating:'٤٫٦',reviews:320,price:699,old:0,inst:'د. سارة عبد الله',img:'https://picsum.photos/seed/audit-governance-course/600/380'},
+ {id:6,title:'Excel للمحاسبين: من الخلية للتقرير',cat:'Excel',lvl:'مبتدئ',hours:9,lessons:38,students:5100,rating:'٤٫٩',reviews:1580,price:399,old:0,inst:'م. يوسف حسن',img:'https://picsum.photos/seed/excel-accounting-course/600/380',badge:'جديد',bgold:true},
+ {id:7,title:'لوحات تحكم Power Query للمحاسبين',cat:'Excel',lvl:'متوسط',hours:11,lessons:42,students:2100,rating:'٤٫٨',reviews:720,price:549,old:0,inst:'م. يوسف حسن',img:'https://picsum.photos/seed/power-query-dashboard-course/600/380'},
+ {id:8,title:'محاسبة التكاليف واتخاذ القرار',cat:'تكاليف',lvl:'متوسط',hours:13,lessons:44,students:1300,rating:'٤٫٧',reviews:410,price:599,old:0,inst:'د. هالة يوسف',img:'https://picsum.photos/seed/cost-accounting-course/600/380'},
+ {id:9,title:'احتراف Odoo للمحاسبين',cat:'ERP',lvl:'متقدم',hours:18,lessons:60,students:1750,rating:'٤٫٨',reviews:490,price:899,old:1199,inst:'م. طارق مصطفى',img:'https://picsum.photos/seed/odoo-erp-accounting-course/600/380',badge:'خصم خاص'},
+ {id:10,title:'التسويات الجردية وإقفالات نهاية السنة',cat:'محاسبة مالية',lvl:'متوسط',hours:7,lessons:22,students:1100,rating:'٤٫٦',reviews:280,price:449,old:0,inst:'أ. محمد سامي',img:'https://picsum.photos/seed/year-end-closing-course/600/380'}
+];
+const DEFAULT_BUNDLES=[{id:1,title:'باقة الميزان المجمعة — أساسيات المحاسبة',price:1499,old:2146,courseIds:[1,2,6,10]}];
+
+function getStore(){const raw=localStorage.getItem(KEY);if(raw===null){localStorage.setItem(KEY,JSON.stringify(DEFAULTS));return [...DEFAULTS];}try{return JSON.parse(raw)||[];}catch(e){return [...DEFAULTS];}}
+function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
+function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
+function setJobs(l){localStorage.setItem(JKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
+function setTeachers(l){localStorage.setItem(TKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
+function setSocial(o){localStorage.setItem(SKEY,JSON.stringify(o));if(window.mzPublishSoon)mzPublishSoon();}}
+function getBundles(){const raw=localStorage.getItem(BKEY);if(raw===null){localStorage.setItem(BKEY,JSON.stringify(DEFAULT_BUNDLES));return [...DEFAULT_BUNDLES];}try{return JSON.parse(raw)||[];}catch(e){return[];}}
+function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));}
+function getOrders(){try{return JSON.parse(localStorage.getItem('mz_orders')||'[]');}catch(e){return[];}}
+function setOrders(l){localStorage.setItem('mz_orders',JSON.stringify(l));}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('toasts').appendChild(t);setTimeout(()=>t.remove(),3200);}
+function encLink(s){ if(!s)return s; try{return 'b64:'+btoa(unescape(encodeURIComponent(s)));}catch(e){return s;} }
+function decLink(s){ if(!s)return s; if(String(s).indexOf('b64:')===0){ try{return decodeURIComponent(escape(atob(String(s).slice(4))));}catch(e){return '';} } return s; }
+
+let editingId=null, lessonsDraft=[], uploadedImg='', bundleSel=[], editingBundleId=null;
+
+/* ---------- الكورسات ---------- */
+function renderStats(){
+  const list=getStore();
+  $('#sTotal').textContent=fmt(list.length);
+  $('#sHours').textContent=fmt(list.reduce((s,c)=>s+(+c.hours||0),0));
+  const paid=list.filter(c=>+c.price>0);
+  $('#sAvg').textContent=paid.length?fmt(Math.round(paid.reduce((s,c)=>s+ +c.price,0)/paid.length)):'٠';
+  $('#sCats').textContent=fmt(new Set(list.map(c=>c.cat)).size);
+}
+function renderTable(filter=''){
+  const list=getStore().filter(c=>c.title.includes(filter)||c.inst.includes(filter)||c.cat.includes(filter));
+  $('#tableCnt').textContent=fmt(list.length)+' كورس';
+  $('#tempty').style.display=list.length?'none':'block';
+  $('#tbody').innerHTML=list.map(c=>`<tr>
+    <td><img src="${c.img}" alt=""></td>
+    <td class="t-title">${c.title}${c.badge?`<small>🏷 ${c.badge}</small>`:''}</td>
+    <td>${c.cat}</td><td>${c.lvl}</td>
+    <td class="mono">${+c.price>0?fmt(c.price)+' ج.م':'مجاني'}</td>
+    <td>${c.inst}</td>
+    <td class="actions"><button class="abtn edit" data-edit="${c.id}">✎ تعديل</button><button class="abtn del" data-del="${c.id}">✕ حذف</button></td></tr>`).join('');
+  renderStats();
+}
+$('#tSearch').addEventListener('input',e=>renderTable(e.target.value.trim()));
+$('#tbody').addEventListener('click',e=>{
+  const del=e.target.closest('[data-del]'),edit=e.target.closest('[data-edit]');
+  if(del){
+    const list=getStore(),c=list.find(x=>x.id==del.dataset.del);
+    if(confirm(`تحذف «${c.title}» نهائيًا من المنصة؟`)){
+      setStore(list.filter(x=>x.id!=del.dataset.del));
+      if(editingId==del.dataset.del)resetForm();
+      renderTable($('#tSearch').value.trim());renderBCourses();
+      toast('✔ تم حذف الكورس من المنصة');
+    }
+  }
+  if(edit){
+    const c=getStore().find(x=>x.id==edit.dataset.edit);
+    editingId=c.id;
+    $('#formTitle').innerHTML=`تعديل: ${c.title} <small>بند رقم ${fmt(c.id)} في الدفتر</small>`;
+    $('#fTitle').value=c.title;$('#fCat').value=c.cat;$('#fLvl').value=c.lvl;
+    $('#fHours').value=c.hours;$('#fLessons').value=c.lessons;
+    $('#fPrice').value=c.price;$('#fOld').value=c.old||0;$('#fInst').value=c.inst;
+    if(c.img.startsWith('data:')){uploadedImg=c.img;$('#fImg').value='';}
+    else{uploadedImg='';$('#fImg').value=c.img.startsWith('https://picsum.photos/seed/meezan-')?'':c.img;}
+    $('#fVideo').value=decLink(c.video||'');$('#fPractical').value=decLink(c.practical||'');
+    $('#fInterview').value=decLink(c.interview||'');
+    $('#fResources').value=decLink(c.resources||'');
+    $('#fTeacher').value=c.teacherId||'';
+    $('#fBadge').value=c.badge||'';$('#fGold').value=c.bgold?'1':'';
+    lessonsDraft=(c.lessons||[]).map(l=>({title:l.title,video:decLink(l.video||''),practical:decLink(l.practical||'')}));renderLessons();
+    $('#saveBtn').textContent='حفظ التعديلات ✓';$('#resetBtn').style.display='flex';
+    updatePreview();
+    $('.form-panel').scrollIntoView({behavior:'smooth'});
+  }
+});
+$('#cform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const title=$('#fTitle').value.trim(),inst=$('#fInst').value.trim();
+  if(!title||!inst){toast('✎ كمّل الحقول المطلوبة: العنوان والمدرّب');return;}
+  const price=Math.max(0,+$('#fPrice').value||0),old=Math.max(0,+$('#fOld').value||0);
+  const data={
+    title,cat:$('#fCat').value,lvl:$('#fLvl').value,
+    hours:Math.max(1,+$('#fHours').value||1),lessons:Math.max(1,+$('#fLessons').value||1),
+    price,old:old>price?0:old,inst,
+    img:uploadedImg||$('#fImg').value.trim()||`https://picsum.photos/seed/meezan-${Date.now()}/600/380`,
+    badge:$('#fBadge').value.trim(),bgold:$('#fGold').value==='1',
+    video:encLink($('#fVideo').value.trim()),practical:encLink($('#fPractical').value.trim()),
+    interview:encLink($('#fInterview').value.trim()),
+    resources:encLink($('#fResources').value.trim()),
+    teacherId:$('#fTeacher').value||'',
+    lessons:lessonsDraft.map(l=>({title:l.title,video:encLink(l.video||''),practical:encLink(l.practical||'')}))
+  };
+  const list=getStore();
+  if(editingId){const i=list.findIndex(x=>x.id===editingId);list[i]={...list[i],...data};toast(`✔ تم تحديث «${data.title}»`);}
+  else{list.push({id:Date.now(),students:0,rating:'٠',reviews:0,...data});toast(`✔ «${data.title}» اتضاف للمنصة`);}
+  try{setStore(list);}catch(err){toast('✕ مساحة التخزين امتلقت — استخدم رابط صورة بدل الرفع');return;}
+  resetForm();renderTable($('#tSearch').value.trim());renderBCourses();
+});
+function resetForm(){
+  editingId=null;$('#cform').reset();
+  $('#fHours').value=10;$('#fLessons').value=30;$('#fPrice').value=499;
+  $('#formTitle').innerHTML='إضافة كورس جديد <small>بند جديد في دفتر المنصة</small>';
+  $('#saveBtn').textContent='حفظ الكورس في المنصة +';$('#resetBtn').style.display='none';
+  lessonsDraft=[];renderLessons();uploadedImg='';
+  updatePreview();
+}
+$('#resetBtn').onclick=resetForm;
+
+/* ---------- الحصص ---------- */
+function renderLessons(){
+  $('#lessonsList').innerHTML = lessonsDraft.length
+    ? lessonsDraft.map((l,i)=>`<div class="lrow-item"><b>${fmt(i+1)}.</b> ${l.title} <button type="button" class="abtn del" data-lrm="${i}">✕</button></div>`).join('')
+    : '<div class="lempty">لسه مفيش حصص — ضيف أول حصة من تحت ✎</div>';
+}
+$('#addLessonBtn').onclick=()=>{
+  const t=$('#lTitle').value.trim();
+  if(!t){toast('اكتب عنوان الحصة الأول ✎');return;}
+  lessonsDraft.push({title:t,video:$('#lVideo').value.trim(),practical:$('#lPractical').value.trim()});
+  $('#lTitle').value='';$('#lVideo').value='';$('#lPractical').value='';
+  renderLessons();
+};
+$('#lessonsList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-lrm]');if(!b)return;
+  lessonsDraft.splice(+b.dataset.lrm,1);renderLessons();
+});
+
+/* ---------- صورة من الجهاز ---------- */
+$('#fImgFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(!f.type.startsWith('image/')){toast('الملف ده مش صورة ✎');return;}
+  const reader=new FileReader();
+  reader.onload=()=>{const img=new Image();
+    img.onload=()=>{
+      const scale=Math.min(1,800/img.width);
+      const cv=document.createElement('canvas');
+      cv.width=Math.round(img.width*scale);cv.height=Math.round(img.height*scale);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      const localData=cv.toDataURL('image/jpeg',0.82);
+      if(window.MZ_STORAGE){
+        toast('⏫ بيرفع الصورة…');
+        cv.toBlob(function(blob){
+          MZ_STORAGE.ref('course-images/course-'+Date.now()+'.jpg').put(blob)
+            .then(s=>s.ref.getDownloadURL())
+            .then(url=>{uploadedImg=url;updatePreview();toast('✔ الصورة اترفعت — هتظهر لكل الزوار');})
+            .catch(()=>{uploadedImg=localData;updatePreview();toast('⚠ الرفع فشل — اتحفظت محليًا');});
+        },'image/jpeg',0.82);
+      }else{uploadedImg=localData;updatePreview();toast('✔ الصورة اتضغطت واتحفظت');}
+    };
+    img.src=reader.result;};
+  reader.readAsDataURL(f);
+});
+
+/* ---------- المعاينة ---------- */
+function updatePreview(){
+  $('#pvTitle').textContent=$('#fTitle').value.trim()||'عنوان الكورس يظهر هنا…';
+  $('#pvCat').textContent=$('#fCat').value;
+  $('#pvLvl').textContent='المستوى: '+$('#fLvl').value;
+  $('#pvInfo').textContent=`⏱ ${fmt(+$('#fHours').value||0)} ساعة · ✎ ${fmt(+$('#fLessons').value||0)} درسًا`;
+  const p=+$('#fPrice').value||0,o=+$('#fOld').value||0;
+  $('#pvPrice').innerHTML=p>0?fmt(p)+' ج.م'+(o>p?` <s>${fmt(o)} ج.م</s>`:''):'مجاني ✦';
+  $('#pvImg').src=uploadedImg||$('#fImg').value.trim()||'https://picsum.photos/seed/meezan-preview/600/380';
+}
+['fTitle','fCat','fLvl','fHours','fLessons','fPrice','fOld','fImg'].forEach(id=>$('#'+id).addEventListener('input',updatePreview));
+
+/* ---------- الباقات المجمعة ---------- */
+function renderBCourses(){
+  $('#bCourses').innerHTML=getStore().map(c=>`<label class="bcheck"><input type="checkbox" value="${c.id}" ${bundleSel.indexOf(c.id)>-1?'checked':''}> ${c.title}</label>`).join('');
+}
+$('#bCourses').addEventListener('change',()=>{bundleSel=Array.from(document.querySelectorAll('#bCourses input:checked')).map(i=>+i.value);});
+function renderBTable(){
+  $('#bTbody').innerHTML=getBundles().map(b=>`<tr>
+    <td class="t-title">${b.title}</td><td class="mono">${fmt(b.price)} ج.م</td><td>${(b.courseIds||[]).length} كورس</td>
+    <td class="actions"><button class="abtn edit" data-bedit="${b.id}">✎ تعديل</button><button class="abtn del" data-bdel="${b.id}">✕ حذف</button></td></tr>`).join('');
+}
+$('#bSave').onclick=()=>{
+  const t=$('#bTitle').value.trim();
+  if(!t||!bundleSel.length){toast('اكتب اسم الباقة واختار كورس واحد على الأقل ✎');return;}
+  const price=Math.max(0,+$('#bPrice').value||0),old=Math.max(0,+$('#bOld').value||0);
+  const list=getBundles();
+  if(editingBundleId){const i=list.findIndex(x=>x.id===editingBundleId);list[i]={...list[i],title:t,price,old:old>price?0:old,courseIds:[...bundleSel]};}
+  else list.push({id:Date.now(),title:t,price,old:old>price?0:old,courseIds:[...bundleSel]});
+  setBundles(list);toast('✔ تم حفظ الباقة');
+  editingBundleId=null;$('#bTitle').value='';$('#bCancel').style.display='none';$('#bSave').textContent='حفظ الباقة +';
+  renderBTable();
+};
+$('#bCancel').onclick=()=>{editingBundleId=null;bundleSel=[];$('#bTitle').value='';$('#bCancel').style.display='none';$('#bSave').textContent='حفظ الباقة +';renderBCourses();};
+$('#bTbody').addEventListener('click',e=>{
+  const del=e.target.closest('[data-bdel]'),ed=e.target.closest('[data-bedit]');
+  if(del){if(confirm('تحذف الباقة دي؟')){setBundles(getBundles().filter(x=>x.id!=del.dataset.bdel));renderBTable();toast('✔ تم حذف الباقة');}}
+  if(ed){const b=getBundles().find(x=>x.id==ed.dataset.bedit);editingBundleId=b.id;bundleSel=[...(b.courseIds||[])];
+    $('#bTitle').value=b.title;$('#bPrice').value=b.price;$('#bOld').value=b.old||0;
+    $('#bCancel').style.display='flex';$('#bSave').textContent='حفظ التعديلات ✓';renderBCourses();}
+});
+
+/* ---------- الطلبات والتفعيل ---------- */
+function paintOrders(rows){
+  $('#oEmpty').style.display=rows.length?'none':'block';
+  $('#oTbody').innerHTML=rows.map(o=>`<tr>
+    <td class="mono">${o.email||''}</td><td>${o.course||''}</td><td class="mono">${fmt(o.amount||0)}</td><td>${o.method||''}</td>
+    <td>${o.status==='active'?'<span style="color:var(--green);font-weight:700">مفعّل ✓</span>':(o.status==='cancelled'?'ملغي':'<span style="color:var(--red);font-weight:700">معلّق</span>')}</td>
+    <td class="actions">
+      ${o.status!=='active'?`<button class="abtn edit" data-act="active" data-fid="${o.fid||''}" data-lid="${o.lid||''}">تفعيل ✓</button>`:''}
+      ${o.status!=='cancelled'?`<button class="abtn del" data-act="cancelled" data-fid="${o.fid||''}" data-lid="${o.lid||''}">إلغاء</button>`:''}
+    </td></tr>`).join('');
+  computeFinance(rows);
+}
+function renderOrders(){
+  if(window.MZ_DB){
+    MZ_DB.collection('orders').orderBy('at','desc').limit(50).get()
+      .then(s=>{const rows=[];s.forEach(d=>{const o=d.data();o.fid=d.id;rows.push(o);});
+        const lids=rows.map(r=>r.lid);getOrders().forEach(l=>{if(lids.indexOf(l.lid)===-1)rows.push(l);});
+        paintOrders(rows);})
+      .catch(()=>paintOrders(getOrders()));
+  } else paintOrders(getOrders());
+}
+$('#oTbody').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const st=b.dataset.act,lid=b.dataset.lid,fid=b.dataset.fid;
+  if(lid){const l=getOrders();const o=l.find(x=>String(x.lid)===String(lid));if(o)o.status=st;setOrders(l);}
+  if(fid&&window.MZ_DB){MZ_DB.collection('orders').doc(fid).update({status:st}).catch(()=>{});}
+  toast(st==='active'?'✔ تم التفعيل — الطالب يقدر يفتح الكورس دلوقتي':'✔ تم إلغاء الطلب');
+  renderOrders();
+});
+$('#refreshOrders').onclick=renderOrders;
+$('#resetDeviceBtn').onclick=function(){
+  var em=prompt('اكتب إيميل المستخدم لفك ربط الجهاز:');
+  if(!em)return;
+  if(!window.MZ_DB){toast('Firebase مش مظبوط');return;}
+  MZ_DB.collection('users').where('email','==',em.trim()).get().then(function(s){
+    if(s.empty){toast('مفيش مستخدم بالإيميل ده');return;}
+    var ops=[];s.forEach(function(d){ops.push(d.ref.update({deviceId:firebase.firestore.FieldValue.delete()}));});
+    return Promise.all(ops).then(function(){toast('✔ اتفك ربط الجهاز — المستخدم يقدر يدخل من جهاز جديد');});
+  }).catch(function(){toast('✕ فشل فك الربط');});
+};
+
+renderTable();updatePreview();renderLessons();renderBCourses();renderBTable();renderOrders();
+/* ---------- إدارة المدرّسين ---------- */
+const TKEY='meezan_teachers_v1';
+function getTeachers(){try{return JSON.parse(localStorage.getItem(TKEY)||'[]');}catch(e){return[];}}
+function setTeachers(l){localStorage.setItem(TKEY,JSON.stringify(l));}
+let editingTeacherId=null;
+function renderTeacherOptions(){
+  const cur=$('#fTeacher').value;
+  $('#fTeacher').innerHTML='<option value="">— بدون —</option>'+getTeachers().map(t=>`<option value="${t.id}">${t.name} (${fmt(t.percent)}%)</option>`).join('');
+  $('#fTeacher').value=cur;
+}
+function renderTTable(){
+  $('#tTbody').innerHTML=getTeachers().map(t=>`<tr>
+    <td class="t-title">${t.name}<small>${t.email||''}</small></td><td class="mono">${fmt(t.percent)}%</td><td class="mono">${t.pay||''}</td>
+    <td class="actions"><button class="abtn edit" data-tedit="${t.id}">✎ تعديل</button><button class="abtn del" data-tdel="${t.id}">✕ حذف</button></td></tr>`).join('')
+    ||'<tr><td colspan="4" style="text-align:center">لسه مفيش مدرّسين — ضيف أول واحد من فوق ✎</td></tr>';
+  renderTeacherOptions();
+}
+$('#tSave').onclick=()=>{
+  const n=$('#tName').value.trim(),p=$('#tPay').value.trim();
+  const em=($('#tEmail').value||'').trim().toLowerCase();
+  const pc=Math.min(100,Math.max(0,+$('#tPercent').value||0));
+  if(!n||!p||!em){toast('اكتب اسم المدرّس وإيميله وحسابه ✎');return;}
+  const id=editingTeacherId||Date.now();
+  const data={name:n,email:em,pay:p,percent:pc};
+  const list=getTeachers();
+  if(editingTeacherId){const i=list.findIndex(x=>x.id===editingTeacherId);list[i]={...list[i],...data};}
+  else list.push({id,...data});
+  setTeachers(list);
+  if(window.MZ_DB){MZ_DB.collection('teachers').doc(String(id)).set({name:n,email:em,pay:p,percent:pc,id:id},{merge:true}).catch(()=>{});}
+  toast('✔ تم حفظ المدرّس');
+  editingTeacherId=null;['tName','tEmail','tPay'].forEach(i=>$('#'+i).value='');$('#tPercent').value=70;
+  $('#tCancel').style.display='none';$('#tSave').textContent='حفظ المدرّس +';
+  renderTTable();
+  /* ---------- لينكات السوشيال ---------- */
+const SKEY='meezan_social_v1';
+function getSocial(){try{return JSON.parse(localStorage.getItem(SKEY)||'{}');}catch(e){return{};}}
+function setSocial(o){localStorage.setItem(SKEY,JSON.stringify(o));}
+(function(){
+  const s=getSocial();
+  $('#sFacebook').value=s.facebook||'';$('#sInstagram').value=s.instagram||'';
+  $('#sLinkedin').value=s.linkedin||'';$('#sYoutube').value=s.youtube||'';
+})();
+$('#sSave').onclick=()=>{
+  setSocial({facebook:$('#sFacebook').value.trim(),instagram:$('#sInstagram').value.trim(),
+    linkedin:$('#sLinkedin').value.trim(),youtube:$('#sYoutube').value.trim()});
+  toast('✔ تم حفظ لينكات السوشيال');
+};
+/* ---------- إعدادات Paymob ---------- */
+const PMKEY='meezan_paymob_v1';
+(function(){
+  let s=null;try{s=JSON.parse(localStorage.getItem(PMKEY)||'null');}catch(e){}
+  if(s){
+    $('#pmKey').value=s.apiKey||'';$('#pmCard').value=(s.integration&&s.integration.card)||'';
+    $('#pmWallet').value=(s.integration&&s.integration.wallet)||'';$('#pmFawry').value=(s.integration&&s.integration.fawry)||'';
+    $('#pmHmac').value=s.hmac||'';
+  }
+  if(window.MZ_DB){
+    MZ_DB.collection('settings').doc('paymob').get().then(function(d){
+      if(d.exists){const x=d.data();
+        $('#pmKey').value=x.apiKey||$('#pmKey').value;
+        $('#pmCard').value=(x.integration&&x.integration.card)||$('#pmCard').value;
+        $('#pmWallet').value=(x.integration&&x.integration.wallet)||$('#pmWallet').value;
+        $('#pmFawry').value=(x.integration&&x.integration.fawry)||$('#pmFawry').value;
+        $('#pmHmac').value=x.hmac||$('#pmHmac').value;}
+    }).catch(function(){});
+  }
+})();
+$('#pmSave').onclick=()=>{
+  const cfg={apiKey:$('#pmKey').value.trim(),hmac:$('#pmHmac').value.trim(),
+    integration:{card:$('#pmCard').value.trim(),wallet:$('#pmWallet').value.trim(),fawry:$('#pmFawry').value.trim()}};
+  if(!cfg.apiKey){toast('اكتب الـ API Key الأول ✎');return;}
+  localStorage.setItem(PMKEY,JSON.stringify(cfg));
+  if(window.MZ_DB){
+    MZ_DB.collection('settings').doc('paymob').set(cfg,{merge:true})
+      .then(()=>toast('✔ اتحفظت إعدادات الدفع أونلاين — شغالة عند كل الطلاب'))
+      .catch(()=>toast('✔ اتحفظت محليًا فقط'));
+  }else toast('✔ اتحفظت الإعدادات محليًا');
+};
+};
+$('#tCancel').onclick=()=>{editingTeacherId=null;['tName','tEmail','tPay'].forEach(i=>$('#'+i).value='');$('#tPercent').value=70;$('#tCancel').style.display='none';$('#tSave').textContent='حفظ المدرّس +';};
+$('#tTbody').addEventListener('click',e=>{
+  const del=e.target.closest('[data-tdel]'),ed=e.target.closest('[data-tedit]');
+  if(del){if(confirm('تحذف المدرّس ده؟')){
+    const t=getTeachers().find(x=>x.id==del.dataset.tdel);
+    setTeachers(getTeachers().filter(x=>x.id!=del.dataset.tdel));
+    if(window.MZ_DB&&t)MZ_DB.collection('teachers').doc(String(t.id)).delete().catch(()=>{});
+    renderTTable();toast('✔ تم حذف المدرّس');
+  }}
+  if(ed){const t=getTeachers().find(x=>x.id==ed.dataset.tedit);editingTeacherId=t.id;
+    $('#tName').value=t.name;$('#tEmail').value=t.email||'';$('#tPay').value=t.pay||'';$('#tPercent').value=t.percent||70;
+    $('#tCancel').style.display='flex';$('#tSave').textContent='حفظ التعديلات ✓';}
+});
+$('#fTeacher').addEventListener('change',()=>{const t=getTeachers().find(x=>x.id===$('#fTeacher').value);if(t)$('#fInst').value=t.name;});
+renderTTable();
+
+/* ---------- تقسيم الإيرادات ---------- */
+function computeFinance(rows){
+  const teachers=getTeachers(),courses=getStore();
+  const per={};
+  rows.filter(o=>o.status==='active').forEach(o=>{
+    const ids=(o.courseIds&&o.courseIds.length)?o.courseIds.map(Number):(o.courseId?[+o.courseId]:[]);
+    if(!ids.length)return;
+    const share=(+o.amount||0)/ids.length;
+    ids.forEach(cid=>{
+      const course=courses.find(x=>x.id===cid);
+      const t=course?teachers.find(x=>x.id===course.teacherId):null;
+      if(t){
+        per[t.id]=per[t.id]||{sales:0,due:0};
+        per[t.id].sales+=share;
+        per[t.id].due+=share*(t.percent||0)/100;
+      }
+    });
+  });
+  $('#fTbody').innerHTML=teachers.map(t=>{
+    const p=per[t.id]||{sales:0,due:0};
+    return `<tr><td class="t-title">${t.name}</td><td class="mono">${fmt(Math.round(p.sales))}</td><td class="mono" style="color:var(--green);font-weight:700">${fmt(Math.round(p.due))} ج.م</td><td class="mono">${fmt(Math.round(p.sales-p.due))} ج.م</td><td class="mono" style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${t.pay||''}</td></tr>`;
+  }).join('')||'<tr><td colspan="5" style="text-align:center">ضيف مدرّسين أولًا عشان يظهر التقسيم</td></tr>';
+  const act=rows.filter(o=>o.status==='active');
+  const totalSales=act.reduce((s,o)=>s+(+o.amount||0),0);
+  const totalDue=Object.values(per).reduce((s,p)=>s+p.due,0);
+  $('#finTotal').innerHTML=`<tr><td><b>الإجمالي (${fmt(act.length)} اشتراك مفعّل)</b></td><td class="mono"><b>${fmt(Math.round(totalSales))}</b></td><td class="mono"><b>${fmt(Math.round(totalDue))} ج.م</b></td><td class="mono"><b>${fmt(Math.round(totalSales-totalDue))} ج.م</b></td><td></td></tr>`;
+}
+/* ---------- إدارة الوظائف ---------- */
+const JKEY='meezan_jobs_v1';
+const DEFAULT_JOBS=[
+ {id:1,title:'محاسب مالي — شركة مقاولات',loc:'القاهرة',type:'دوام كامل',salary:'٨٬٠٠٠ – ١٢٬٠٠٠ ج.م',img:'https://picsum.photos/seed/job-accountant-construction/600/380',contact:'https://wa.me/201000000000'},
+ {id:2,title:'محاسب ضرائب — مكتب استشارات',loc:'الجيزة',type:'دوام كامل',salary:'١٠٬٠٠٠ – ١٥٬٠٠٠ ج.م',img:'https://picsum.photos/seed/job-tax-accountant/600/380',contact:'https://wa.me/201000000001'},
+ {id:3,title:'محاسب تكاليف — مصنع أغذية',loc:'العاشر من رمضان',type:'دوام كامل',salary:'حسب الخبرة',img:'https://picsum.photos/seed/job-cost-accountant/600/380',contact:'https://wa.me/201000000002'},
+ {id:4,title:'محاسب نظام Oracle — شركة تجارية',loc:'مدينة نصر',type:'هايبرد',salary:'١٢٬٠٠٠ – ١٨٬٠٠٠ ج.م',img:'https://picsum.photos/seed/job-oracle-accountant/600/380',contact:'https://wa.me/201000000003'}
+];
+function getJobs(){const raw=localStorage.getItem(JKEY);if(raw===null){localStorage.setItem(JKEY,JSON.stringify(DEFAULT_JOBS));return [...DEFAULT_JOBS];}try{return JSON.parse(raw)||[];}catch(e){return[];}}
+function setJobs(l){localStorage.setItem(JKEY,JSON.stringify(l));}
+let jobImg='',editingJobId=null;
+$('#jImgFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f||!f.type.startsWith('image/')){toast('الملف ده مش صورة ✎');return;}
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();
+    im.onload=()=>{
+      const s=Math.min(1,800/im.width);
+      const cv=document.createElement('canvas');
+      cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);
+      cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+      const local=cv.toDataURL('image/jpeg',0.82);
+      if(window.MZ_STORAGE){toast('⏫ بيرفع الصورة…');
+        cv.toBlob(function(b){
+          MZ_STORAGE.ref('job-images/job-'+Date.now()+'.jpg').put(b)
+            .then(sn=>sn.ref.getDownloadURL())
+            .then(u=>{jobImg=u;toast('✔ الصورة اترفعت');})
+            .catch(()=>{jobImg=local;toast('✔ اتحفظت محليًا');});
+        },'image/jpeg',0.82);
+      }else{jobImg=local;toast('✔ الصورة اتحفظت');}
+    };
+    im.src=r.result;};
+  r.readAsDataURL(f);
+});
+function renderJTable(){
+  $('#jTbody').innerHTML=getJobs().map(j=>`<tr>
+    <td class="t-title">${j.title}</td><td>${j.loc||''}</td><td class="mono">${j.salary||''}</td>
+    <td class="mono" style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${j.contact||''}</td>
+    <td class="actions"><button class="abtn edit" data-jedit="${j.id}">✎ تعديل</button><button class="abtn del" data-jdel="${j.id}">✕ حذف</button></td></tr>`).join('');
+}
+$('#jSave').onclick=()=>{
+  const t=$('#jTitle').value.trim(),c=$('#jContact').value.trim();
+  const wa=$('#jWa').value.replace(/\D/g,'');
+  if(!t||(!c&&!wa)){toast('اكتب المسمى الوظيفي وضيف رقم واتساب أو لينك تواصل ✎');return;}
+  const data={title:t,loc:$('#jLoc').value.trim(),type:$('#jType').value.trim(),salary:$('#jSalary').value.trim(),
+  img:jobImg||$('#jImg').value.trim()||`https://picsum.photos/seed/meezan-job-${Date.now()}/600/380`,contact:c,wa:wa};
+  const list=getJobs();
+  if(editingJobId){const i=list.findIndex(x=>x.id===editingJobId);list[i]={...list[i],...data};}
+  else list.push({id:Date.now(),...data});
+  setJobs(list);toast('✔ تم حفظ الوظيفة');
+  editingJobId=null;jobImg='';
+  ['jTitle','jLoc','jType','jSalary','jImg','jContact','jWa'].forEach(i=>$('#'+i).value='');
+  $('#jCancel').style.display='none';$('#jSave').textContent='حفظ الوظيفة +';
+  renderJTable();
+  /* ---------- إدارة المدرّسين ---------- */
+const TKEY='meezan_teachers_v1';
+function getTeachers(){try{return JSON.parse(localStorage.getItem(TKEY)||'[]');}catch(e){return[];}}
+function setTeachers(l){localStorage.setItem(TKEY,JSON.stringify(l));}
+let editingTeacherId=null;
+function renderTeacherOptions(){
+  const cur=$('#fTeacher').value;
+  $('#fTeacher').innerHTML='<option value="">— بدون —</option>'+getTeachers().map(t=>`<option value="${t.id}">${t.name} (${fmt(t.percent)}%)</option>`).join('');
+  $('#fTeacher').value=cur;
+}
+function renderTTable(){
+  $('#tTbody').innerHTML=getTeachers().map(t=>`<tr>
+    <td class="t-title">${t.name}<small>${t.email||''}</small></td><td class="mono">${fmt(t.percent)}%</td><td class="mono">${t.pay||''}</td>
+    <td class="actions"><button class="abtn edit" data-tedit="${t.id}">✎ تعديل</button><button class="abtn del" data-tdel="${t.id}">✕ حذف</button></td></tr>`).join('')
+    ||'<tr><td colspan="4" style="text-align:center">لسه مفيش مدرّسين — ضيف أول واحد من فوق ✎</td></tr>';
+  renderTeacherOptions();
+}
+$('#tSave').onclick=()=>{
+  const n=$('#tName').value.trim(),p=$('#tPay').value.trim();
+  const pc=Math.min(100,Math.max(0,+$('#tPercent').value||0));
+  if(!n||!p){toast('اكتب اسم المدرّس وحساب الاستقبال ✎');return;}
+  const list=getTeachers();
+  const em=$('#tEmail').value.trim().toLowerCase();
+  if(!em){toast('اكتب إيميل المدرّس ✎');return;}
+  const id=editingTeacherId||Date.now();
+  const data={name:n,email:em,pay:p,percent:pc};
+  if(editingTeacherId){const i=list.findIndex(x=>x.id===editingTeacherId);list[i]={...list[i],...data};}
+  else list.push({id,...data});
+  setTeachers(list);
+  /* مزامنة الإيميلات مع Firestore */
+  if(window.MZ_DB){
+    MZ_DB.collection('teachers').doc(String(id)).set({name:n,email:em,pay:p,percent:pc,id:id},{merge:true}).catch(()=>{});
+  }
+  toast('✔ تم حفظ المدرّس');
+  editingTeacherId=null;['tName','tEmail','tPay'].forEach(i=>$('#'+i).value='');$('#tPercent').value=70;
+  $('#tCancel').style.display='none';$('#tSave').textContent='حفظ المدرّس +';
+  renderTTable();
+};
+$('#tCancel').onclick=()=>{editingTeacherId=null;['tName','tEmail','tPay'].forEach(i=>$('#'+i).value='');$('#tPercent').value=70;$('#tCancel').style.display='none';$('#tSave').textContent='حفظ المدرّس +';};
+$('#tTbody').addEventListener('click',e=>{
+  const del=e.target.closest('[data-tdel]'),ed=e.target.closest('[data-tedit]');
+  if(del){if(confirm('تحذف المدرّس ده؟')){
+    const t=getTeachers().find(x=>x.id==del.dataset.tdel);
+    setTeachers(getTeachers().filter(x=>x.id!=del.dataset.tdel));
+    if(window.MZ_DB&&t)MZ_DB.collection('teachers').doc(String(t.id)).delete().catch(()=>{});
+    renderTTable();toast('✔ تم حذف المدرّس');
+  }}
+  if(ed){const t=getTeachers().find(x=>x.id==ed.dataset.tedit);editingTeacherId=t.id;
+    $('#tName').value=t.name;$('#tPay').value=t.pay||'';$('#tPercent').value=t.percent||70;    $('#tEmail').value=t.email||'';
+    $('#tCancel').style.display='flex';$('#tSave').textContent='حفظ التعديلات ✓';}
+});
+$('#fTeacher').addEventListener('change',()=>{const t=getTeachers().find(x=>x.id===$('#fTeacher').value);if(t)$('#fInst').value=t.name;});
+renderTTable();
+
+/* ---------- تقسيم الإيرادات ---------- */
+function computeFinance(rows){
+  const teachers=getTeachers(),courses=getStore();
+  const per={};
+  rows.filter(o=>o.status==='active').forEach(o=>{
+    const ids=(o.courseIds&&o.courseIds.length)?o.courseIds.map(Number):(o.courseId?[+o.courseId]:[]);
+    if(!ids.length)return;
+    const share=(+o.amount||0)/ids.length;
+    ids.forEach(cid=>{
+      const course=courses.find(x=>x.id===cid);
+      const t=course?teachers.find(x=>x.id===course.teacherId):null;
+      if(t){
+        per[t.id]=per[t.id]||{sales:0,due:0};
+        per[t.id].sales+=share;
+        per[t.id].due+=share*(t.percent||0)/100;
+      }
+    });
+  });
+  $('#fTbody').innerHTML=teachers.map(t=>{
+    const p=per[t.id]||{sales:0,due:0};
+    return `<tr><td class="t-title">${t.name}</td><td class="mono">${fmt(Math.round(p.sales))}</td><td class="mono" style="color:var(--green);font-weight:700">${fmt(Math.round(p.due))} ج.م</td><td class="mono">${fmt(Math.round(p.sales-p.due))} ج.م</td><td class="mono" style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${t.pay||''}</td></tr>`;
+  }).join('')||'<tr><td colspan="5" style="text-align:center">ضيف مدرّسين أولًا عشان يظهر التقسيم</td></tr>';
+  const act=rows.filter(o=>o.status==='active');
+  const totalSales=act.reduce((s,o)=>s+(+o.amount||0),0);
+  const totalDue=Object.values(per).reduce((s,p)=>s+p.due,0);
+  $('#finTotal').innerHTML=`<tr><td><b>الإجمالي (${fmt(act.length)} اشتراك مفعّل)</b></td><td class="mono"><b>${fmt(Math.round(totalSales))}</b></td><td class="mono"><b>${fmt(Math.round(totalDue))} ج.م</b></td><td class="mono"><b>${fmt(Math.round(totalSales-totalDue))} ج.م</b></td><td></td></tr>`;
+}
+};
+$('#jCancel').onclick=()=>{editingJobId=null;jobImg='';['jTitle','jLoc','jType','jSalary','jImg','jContact','jWa'].forEach(i=>$('#'+i).value='');;$('#jCancel').style.display='none';$('#jSave').textContent='حفظ الوظيفة +';};
+$('#jTbody').addEventListener('click',e=>{
+  const del=e.target.closest('[data-jdel]'),ed=e.target.closest('[data-jedit]');
+  if(del){if(confirm('تحذف الوظيفة دي؟')){setJobs(getJobs().filter(x=>x.id!=del.dataset.jdel));renderJTable();toast('✔ تم حذف الوظيفة');}}
+  if(ed){const j=getJobs().find(x=>x.id==ed.dataset.jedit);editingJobId=j.id;
+    $('#jTitle').value=j.title;$('#jLoc').value=j.loc||'';$('#jType').value=j.type||'';$('#jSalary').value=j.salary||'';$('#jContact').value=j.contact||'';
+    $('#jWa').value=j.wa||'';
+    if(j.img.startsWith('data:')){jobImg=j.img;$('#jImg').value='';}
+    else{jobImg='';$('#jImg').value=j.img.startsWith('https://picsum.photos/seed/meezan-job-')?'':j.img;}
+    $('#jCancel').style.display='flex';$('#jSave').textContent='حفظ التعديلات ✓';}
+});
+renderJTable();
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+(function(){
+  var who=document.getElementById('whoami');
+  function enter(email){document.body.classList.add('authed');if(who)who.textContent='⚙ '+email;}
+  document.getElementById('logoutBtn').addEventListener('click',function(){
+    sessionStorage.removeItem('mz_tmp_admin');
+    if(window.MZ_AUTH)MZ_AUTH.signOut().then(function(){location.replace('login.html');});
+    else location.replace('index.html');
+  });
+  if(window.MZ_ERROR){
+    var TMP='1234';
+    if(sessionStorage.getItem('mz_tmp_admin')!=='1'){
+      var p=prompt('⚠ Firebase لسه مش مظبوط — دخول محلي مؤقت.\nكلمة المرور المؤقتة ('+TMP+'):');
+      if(p!==TMP){location.replace('index.html');return;}
+      sessionStorage.setItem('mz_tmp_admin','1');
+    }
+    enter('وضع محلي مؤقت — ظبّط Firebase');
+    return;
+  }
+  MZ_AUTH.onAuthStateChanged(function(user){
+    if(!user||(user.email||'').toLowerCase()!==window.ADMIN_EMAIL){location.replace('login.html');return;}
+    enter(user.email);
+    if(window.renderOrders)renderOrders();
+  });
+})();
+</script>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'';}
+  b.onclick=function(){document.documentElement.classList.toggle('dark');localStorage.setItem('mz_theme',document.documentElement.classList.contains('dark')?'dark':'light');sync();};
+  sync();
+})();
+</script>
+</body>
+</html>

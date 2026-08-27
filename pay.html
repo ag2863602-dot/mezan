@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إتمام الدفع — مِيزان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F0E4;--card:#FFFDF6;--ink:#16352A;--ink2:#4A6157;--red:#C6402E;--green:#1E7A50;--gold:#C9A227;--line:rgba(22,53,42,.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--ink);background:var(--paper);
+ background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(22,53,42,.065) 34px 35px);line-height:1.7;min-height:100vh}
+h1,h2,h3{font-family:'Changa'}
+.mono{font-family:'IBM Plex Mono',monospace}
+img{display:block}
+.wrap{max-width:1000px;margin-inline:auto;padding-inline:24px}
+.noise{position:fixed;inset:0;pointer-events:none;opacity:.05;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.topbar{background:var(--dark);color:var(--paper);padding:14px 0;border-bottom:2px solid var(--ink)}
+.topbar .wrap{display:flex;align-items:center;gap:14px}
+.topbar .logo{font-family:'Changa';font-weight:800;font-size:22px}
+.topbar a{color:var(--gold);font-size:14px;margin-inline-start:auto;text-decoration:none}
+.pay-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;padding:44px 0 80px;align-items:start}
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 rgba(22,53,42,.13);padding:24px}
+.panel h2{font-size:21px;border-bottom:4px double var(--ink);padding-bottom:10px;margin-bottom:18px}
+.sum-img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1.5px solid var(--ink);border-radius:6px}
+.sum-title{font-size:20px;margin:12px 0 4px}
+.sum-meta{font-family:'IBM Plex Mono';font-size:12.5px;color:var(--ink2);display:flex;gap:14px;flex-wrap:wrap}
+.sum-price{font-family:'Changa';font-weight:800;font-size:34px;margin-top:10px}
+.sum-price s{font-size:16px;color:var(--ink2);font-family:'IBM Plex Mono';font-weight:400}
+.buyer{margin-top:12px;font-size:13px;background:#F1E9D6;border:1.5px dashed var(--ink);border-radius:6px;padding:8px 12px}
+.buyer b{font-family:'IBM Plex Mono';font-weight:500}
+.methods{display:grid;gap:10px;margin-bottom:16px}
+.method{border:2px solid var(--ink);border-radius:6px;background:#fff;padding:12px 16px;font-family:'Changa';font-weight:700;font-size:16px;cursor:pointer;display:flex;gap:10px;align-items:center;transition:.2s}
+.method:hover{transform:translateX(-3px)}
+.method.on{background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--gold)}
+.paynum{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#F1E9D6;border:1.5px dashed var(--ink);border-radius:6px;padding:12px 14px;margin-bottom:18px;font-size:14px}
+.paynum b{font-size:16px}
+.cpbtn{border:1.5px solid var(--ink);background:#fff;border-radius:5px;padding:4px 12px;font-family:'Changa';font-weight:700;cursor:pointer}
+.cpbtn:hover{background:var(--gold)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+.field input{width:100%;border:2px solid var(--ink);border-radius:5px;padding:10px 12px;font-family:inherit;font-size:14px;background:#fff}
+.field input:focus{outline:3px solid rgba(201,162,39,.45)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Changa';font-weight:700;font-size:16px;
+ padding:11px 24px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--red);border-radius:4px;cursor:pointer;transition:.2s;text-decoration:none}
+.btn:hover{transform:translate(-2px,-3px);box-shadow:7px 7px 0 var(--red)}
+.btn.wide{width:100%}
+.success{display:none;border:2.5px solid var(--green);color:var(--green);border-radius:8px;padding:18px;font-family:'Changa';font-weight:700;font-size:18px;text-align:center;outline:2px solid var(--green);outline-offset:3px;transform:rotate(-1deg)}
+.paynote{margin-top:14px;font-size:13px;color:var(--ink2)}
+.pmbox{border:2px solid var(--green);border-radius:8px;padding:16px;margin-bottom:18px;background:rgba(30,122,80,.07)}
+.pmbox .method.on{background:var(--green);box-shadow:4px 4px 0 var(--ink)}
+.pdivider{display:flex;align-items:center;gap:12px;margin:6px 0 16px;color:var(--ink2);font-size:13px}
+.pdivider::before,.pdivider::after{content:'';flex:1;border-top:1.5px dashed var(--line)}
+.toasts{position:fixed;bottom:24px;right:50%;transform:translateX(50%);z-index:120;display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{background:var(--ink);color:var(--paper);padding:12px 24px;border-radius:6px;box-shadow:5px 5px 0 var(--gold);font-size:14.5px;animation:fadeUp .35s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(max-width:860px){.pay-grid{grid-template-columns:1fr}}
+/* ===== الدارك مود ===== */
+html.dark{--paper:#0F1713;--card:#15221B;--ink:#EAE5D7;--ink2:#9FB0A5;--line:rgba(234,229,215,.16)}
+html.dark body{background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(234,229,215,.05) 34px 35px)}
+.theme-btn{position:fixed;bottom:22px;left:22px;z-index:110;width:52px;height:52px;border-radius:99px;border:2px solid var(--ink);background:var(--card);font-size:22px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.3);transition:.25s}
+.theme-btn:hover{transform:translateY(-3px)}
+html.dark .field input{background:#1B2C23;color:var(--ink)}
+html.dark .method{background:#1B2C23}
+html.dark .paynum{background:#1B2C23}
+html.dark .cpbtn{background:#15221B;color:var(--ink)}
+html.dark .buyer{background:#1B2C23}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<header class="topbar"><div class="wrap"><span class="logo">⚖ مِيزَان — الدفع</span><a href="index.html">↩ العودة للمنصة</a></div></header>
+
+<main class="wrap pay-grid">
+  <section class="panel">
+    <h2>ملخص الاشتراك</h2>
+    <div id="sumBox"></div>
+  </section>
+  <section class="panel">
+    <h2>اختر طريقة الدفع</h2>
+    <div class="pmbox">
+      <h3 style="font-size:17px;margin-bottom:10px">⚡ دفع فوري وآمن عبر Paymob</h3>
+      <div class="methods">
+        <button type="button" class="method" data-pm="card">💳 بطاقة بنكية</button>
+        <button type="button" class="method" data-pm="wallet">📱 فودافون كاش</button>
+      </div>
+      <button class="btn wide" id="paymobBtn" type="button">ادفع الآن ←</button>
+      <p class="paynote">هتنتقل لصفحة دفع آمنة تابعة لـ Paymob، وبعد الدفع بترجعلنا ويتفتح الاشتراك تلقائيًا.</p>
+    </div>
+    <div class="pdivider"><span>أو تحويل يدوي</span></div>
+    <div class="methods" id="methods">
+      <button class="method on" data-m="vodafone">📱 فودافون كاش</button>
+      <button class="method" data-m="instapay">🏦 إنستاباي</button>
+    </div>
+    <div class="paynum"><span>حوّل على:</span><b class="mono" id="payNum"></b><button class="cpbtn" id="copyBtn" type="button">نسخ ⧉</button></div>
+    <form id="payForm">
+      <div class="field"><label>رقم المحوِّل منه أو اسمك <i style="color:var(--red)">*</i></label><input id="refInput" required placeholder="01xxxxxxxxx"></div>
+      <div class="field"><label>ملاحظة (اختياري)</label><input id="noteInput" placeholder="مثال: حوّلت الساعة ٣"></div>
+      <button class="btn wide" type="submit">✔ أكدت التحويل — فعّل اشتراكي</button>
+    </form>
+    <div class="success" id="successBox">✔ تم استلام طلبك!<br><span style="font-size:14px;font-family:'IBM Plex Sans Arabic';font-weight:400">هنراجع التحويل ونفتح الكورس على بريدك خلال ساعات عمل.</span></div>
+    <p class="paynote">بعد ما نتحقق من التحويل، بيتم فتح الكورس تلقائيًا على حسابك بنفس البريد.</p>
+  </section>
+</main>
+<div class="toasts" id="toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+  if(window.mzSync){window.mzSync(function(changed){
+    if(changed&&!sessionStorage.getItem('mz_reloaded')){sessionStorage.setItem('mz_reloaded','1');location.reload();}
+    else sessionStorage.removeItem('mz_reloaded');
+  });}
+  </script>
+<script>
+'use strict';
+/* ⚙ غيّر أرقام الاستقبال من هنا */
+var PAY_INFO = {
+  vodafone: '01093660701',        // ← رقم فودافون كاش بتاعك
+  instapay: 'abdelrahman.ka819@instapay',     // ← عنوان إنستاباي بتاعك
+};
+/* ⚙ بيانات حساب Paymob — الصقهم من لوحة التاجر */
+var fmt = function(n){return n.toLocaleString('ar-EG');};
+function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('toasts').appendChild(t);setTimeout(function(){t.remove();},3200);}
+
+/* نفس مخزن الكورسات */
+var KEY='meezan_courses_v2';
+function getStore(){var raw=localStorage.getItem(KEY);if(raw===null)return[];try{return JSON.parse(raw)||[];}catch(e){return[];}}
+function getBundles(){var raw=localStorage.getItem('meezan_bundles_v1');if(raw===null)return[];try{return JSON.parse(raw)||[];}catch(e){return[];}}
+var type = new URLSearchParams(location.search).get('type')||'course';
+var id = new URLSearchParams(location.search).get('id');
+var item=null;
+if(type==='bundle'){
+  var bnd=getBundles().find(function(x){return String(x.id)===String(id);});
+  if(bnd){
+    var names=(bnd.courseIds||[]).map(function(cid){var c=getStore().find(function(x){return String(x.id)===String(cid);});return c?c.title:null;}).filter(Boolean);
+    item={kind:'bundle',bundleId:bnd.id,courseIds:(bnd.courseIds||[]).map(Number),title:bnd.title,price:bnd.price,old:bnd.old,
+      img:'https://picsum.photos/seed/meezan-bundle/600/380',
+      meta:names.map(function(n){return '<span>✓ '+n+'</span>';}).join('')};
+  }
+}else{
+  var course=getStore().find(function(c){return String(c.id)===String(id);});
+  if(course)item={kind:'course',courseId:course.id,courseIds:[course.id],title:course.title,price:course.price,old:course.old,img:course.img,
+    meta:'<span>'+course.cat+'</span><span>'+course.lvl+'</span><span>⏱ '+fmt(course.hours)+' ساعة</span>'};
+}
+if(!item){
+  document.getElementById('sumBox').innerHTML='<p>العنصر مش موجود — <a href="index.html">ارجع للمنصة</a>.</p>';
+}else{
+  document.getElementById('sumBox').innerHTML =
+    '<img class="sum-img" src="'+item.img+'" alt="">' +
+    '<h3 class="sum-title">'+item.title+'</h3>' +
+    '<div class="sum-meta">'+item.meta+'</div>' +
+    '<div class="sum-price">'+(+item.price>0?fmt(item.price)+' ج.م':'مجاني ✦')+(item.old?' <s>'+fmt(item.old)+' ج.م</s>':'')+'</div>' +
+    '<div class="buyer">المشترك: <b id="buyerEmail">…</b></div>';
+}
+/* طريقة الدفع */
+var method='vodafone';
+function showNum(){document.getElementById('payNum').textContent=PAY_INFO[method];}
+showNum();
+document.querySelectorAll('.method').forEach(function(b){
+  b.onclick=function(){document.querySelectorAll('.method').forEach(function(x){x.classList.remove('on');});b.classList.add('on');method=b.dataset.m;showNum();};
+});
+document.getElementById('copyBtn').onclick=function(){
+  var txt=PAY_INFO[method];
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){toast('✔ اتنسخ: '+txt);});}
+  else{prompt('انسخ الرقم:',txt);}
+};
+
+/* حماية: لازم دخول */
+var user=null;
+if(!window.MZ_AUTH){
+  location.replace('login.html');
+}else{
+  MZ_AUTH.onAuthStateChanged(function(u){
+    if(!u){
+      sessionStorage.setItem('mz_pending',JSON.stringify({type:'pay',id:id}));
+      location.replace('login.html');
+      return;
+    }
+    user=u;
+    var be=document.getElementById('buyerEmail'); if(be)be.textContent=u.email;
+    handleReturn();
+  });
+}
+/* ⚙ إعدادات Paymob بتتقرأ تلقائيًا من لوحة الإدارة */
+var PAYMOB_API_KEY='',PAYMOB_INTEGRATION={card:'',wallet:'',fawry:''},PAYMOB_HMAC='';
+(function(){
+  function applyCfg(c){
+    if(!c)return;
+    PAYMOB_API_KEY=c.apiKey||'';
+    PAYMOB_INTEGRATION=c.integration||{card:'',wallet:'',fawry:''};
+    PAYMOB_HMAC=c.hmac||'';
+    if(typeof syncPmUI==='function')syncPmUI();
+  }
+  try{applyCfg(JSON.parse(localStorage.getItem('meezan_paymob_v1')||'null'));}catch(e){}
+  if(window.MZ_DB){
+    MZ_DB.collection('settings').doc('paymob').get().then(function(s){if(s.exists)applyCfg(s.data());}).catch(function(){});
+  }
+})();
+/* ================= دفع Paymob ================= */
+var pmMethod='card';
+document.querySelectorAll('[data-pm]').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('[data-pm]').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');pmMethod=b.dataset.pm;
+  };
+});
+function syncPmUI(){
+  var anyOn=false;
+  document.querySelectorAll('[data-pm]').forEach(function(b){
+    var m=b.dataset.pm;
+    var has=(m==='card'&&!!PAYMOB_INTEGRATION.card)||(m==='wallet'&&!!PAYMOB_INTEGRATION.wallet)||(m==='fawry'&&!!PAYMOB_INTEGRATION.fawry);
+    b.style.display=has?'':'none';
+    if(has&&b.classList.contains('on'))anyOn=true;
+  });
+  if(!anyOn){
+    document.querySelectorAll('[data-pm]').forEach(function(b){b.classList.remove('on');});
+    var first=null;
+    document.querySelectorAll('[data-pm]').forEach(function(b){if(!first&&b.style.display!=='none')first=b;});
+    if(first){first.classList.add('on');pmMethod=first.dataset.pm;}
+  }
+}
+syncPmUI();
+function getOrdersLocal(){try{return JSON.parse(localStorage.getItem('mz_orders')||'[]');}catch(e){return[];}}
+function saveOrderLocal(o){var l=getOrdersLocal();l.push(o);localStorage.setItem('mz_orders',JSON.stringify(l));}
+function activateLocal(lid){var l=getOrdersLocal();var o=l.find(function(x){return String(x.lid)===String(lid);});if(o)o.status='active';localStorage.setItem('mz_orders',JSON.stringify(l));}
+function handleReturn(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('return')!=='1')return;
+  var lid=q.get('lid');
+  if(q.get('success')==='true'){
+    activateLocal(lid);
+    if(window.MZ_DB){MZ_DB.collection('orders').where('lid','==',+lid).get().then(function(s){s.forEach(function(d){d.ref.update({status:'active'});});}).catch(function(){});}
+    document.getElementById('payForm').style.display='none';
+    var sb=document.getElementById('successBox');sb.style.display='block';
+    sb.innerHTML='✔ تم الدفع بنجاح!<br><span style="font-size:14px;font-family:\'IBM Plex Sans Arabic\';font-weight:400">اشتراكك اتفعّل — روح لصفحة الكورس وابدأ فورًا.</span>';
+    history.replaceState(null,'',location.pathname);
+  }else{
+    toast('✕ عملية الدفع لم تكتمل — جرّب تاني أو استخدم طريقة يدوية');
+  }
+}
+document.getElementById('paymobBtn').onclick=function(){
+  if(!user){toast('سجّل الدخول أولًا ✎');return;}
+  if(!item){return;}
+  if(!PAYMOB_API_KEY){toast('⚠ الإدارة لسه مظبطتش إعدادات Paymob من اللوحة');return;}
+  if(!PAYMOB_INTEGRATION[pmMethod]){toast('⚠ طريقة الدفع دي مش متظبطة في لوحة الإدارة');return;}  var btn=this;btn.disabled=true;btn.textContent='جاري تجهيز الدفع…';
+  var cents=Math.round((+item.price||0)*100);
+  var order={uid:user.uid,email:user.email,lid:Date.now(),kind:item.kind,courseId:item.courseId||null,bundleId:item.bundleId||null,
+    courseIds:item.courseIds||[],course:item.title,amount:+item.price||0,method:'paymob-'+pmMethod,ref:'Paymob',note:'',status:'pending',at:Date.now()};
+  saveOrderLocal(order);
+  var returnUrl=location.origin+location.pathname+'?return=1&lid='+order.lid;
+  var T;
+  fetch('https://accept.paymob.com/api/auth/tokens',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({api_key:PAYMOB_API_KEY})})
+  .then(function(r){return r.json();})
+  .then(function(d){ if(!d.token)throw new Error('apikey'); T=d.token;
+    return fetch('https://accept.paymob.com/api/ecommerce/orders/transactions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+T},
+      body:JSON.stringify({auth_token:T,delivery_needed:'false',amount_cents:cents,currency:'EGP',
+        order_items:[{name:item.title,amount_cents:cents,quantity:1}]})});})
+  .then(function(r){return r.json();})
+  .then(function(o){ if(!o.id)throw new Error('order');
+    return fetch('https://accept.paymob.com/api/acceptance/payment_keys',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({auth_token:T,order_id:o.id,integration_id:PAYMOB_INTEGRATION[pmMethod],redirect_url:returnUrl,
+        billing_data:{apartment:'NA',email:user.email,floor:'NA',first_name:'Meezan',last_name:'Student',street:'NA',building:'NA',
+          phone_number:'01000000000',shipping_method:'NA',postal_code:'NA',city:'Cairo',country:'EG',state:'NA'}})});})
+  .then(function(r){return r.json();})
+  .then(function(pk){ if(!pk.token)throw new Error('paykey');
+    location.href='https://accept.paymob.com/api/acceptance/iframes?payment_token='+pk.token;})
+  .catch(function(err){
+    console.warn(err);
+    toast('✕ مشكلة في بدء الدفع — راجع بيانات Paymob أو استخدم طريقة يدوية');
+    btn.disabled=false;btn.textContent='ادفع الآن ←';
+  });
+};
+
+/* إرسال الطلب */
+document.getElementById('payForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(!user){toast('سجّل الدخول أولًا ✎');return;}
+  if(!item){return;}
+  var order={
+    uid:user.uid, email:user.email, lid:Date.now(),
+    kind:item.kind, courseId:item.courseId||null, bundleId:item.bundleId||null,
+    courseIds:item.courseIds||[], course:item.title, amount:+item.price||0,
+    method:method, ref:document.getElementById('refInput').value.trim(),
+    note:document.getElementById('noteInput').value.trim(),
+    status:'pending', at:Date.now()
+  };
+  function done(){
+    document.getElementById('payForm').style.display='none';
+    document.getElementById('successBox').style.display='block';
+    toast('✔ تم تسجيل طلب الاشتراك');
+  }
+  var list=JSON.parse(localStorage.getItem('mz_orders')||'[]');list.push(order);
+  localStorage.setItem('mz_orders',JSON.stringify(list));
+  if(window.MZ_DB){ MZ_DB.collection('orders').add(order).then(done).catch(function(){done();}); }
+  else done();
+});
+</script>
+<button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع">🌙</button>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';}
+  b.onclick=function(){
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('mz_theme',document.documentElement.classList.contains('dark')?'dark':'light');
+    sync();
+  };
+  sync();
+})();
+</script>
+<body>
+    <script>if(localStorage.getItem('mz_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</html>

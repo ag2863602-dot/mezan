@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول — مِيزان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F0E4;--card:#FFFDF6;--ink:#16352A;--ink2:#4A6157;--red:#C6402E;--green:#1E7A50;--gold:#C9A227;--line:rgba(22,53,42,.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--ink);min-height:100vh;background:var(--paper);
+ background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(22,53,42,.065) 34px 35px);line-height:1.7}
+h1{font-family:'Changa'}
+.noise{position:fixed;inset:0;pointer-events:none;opacity:.05;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{width:470px;max-width:100%;background:var(--card);border:2px solid var(--ink);border-radius:8px;
+ box-shadow:12px 12px 0 rgba(14,42,33,.25);padding:34px;position:relative;transform:rotate(-.5deg)}
+.lstamp{position:absolute;top:-24px;left:-14px;border:3px solid var(--green);color:var(--green);font-family:'Changa';
+ font-weight:800;padding:5px 16px;border-radius:8px;background:rgba(255,253,246,.85);outline:2px solid var(--green);
+ outline-offset:3px;transform:rotate(-8deg)}
+h1{font-size:28px;font-weight:800;border-bottom:4px double var(--ink);padding-bottom:12px}
+.sub{font-size:13.5px;color:var(--ink2);margin:8px 0 20px}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:2px solid var(--ink);background:#fff;
+ border-radius:6px;padding:11px;font-family:'Changa';font-weight:700;font-size:16px;cursor:pointer;
+ box-shadow:4px 4px 0 rgba(22,53,42,.15);transition:.2s}
+.gbtn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(22,53,42,.15)}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--ink2);font-size:13px}
+.divider::before,.divider::after{content:'';flex:1;border-top:1.5px dashed var(--line)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+.field input{width:100%;border:2px solid var(--ink);border-radius:5px;padding:11px 14px;font-family:inherit;font-size:14.5px;background:#fff}
+.field input:focus{outline:3px solid rgba(201,162,39,.45)}
+.pw-wrap{position:relative}
+.pw-wrap button{position:absolute;left:8px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:17px;cursor:pointer}
+.err{display:none;color:var(--red);font-size:13.5px;font-weight:700;border:1.5px dashed var(--red);background:rgba(198,64,46,.06);padding:8px 12px;border-radius:6px;margin-bottom:14px}
+.err.show{display:block;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(5px)}50%{transform:translateX(-5px)}75%{transform:translateX(3px)}}
+.btn{width:100%;display:inline-flex;justify-content:center;font-family:'Changa';font-weight:700;font-size:17px;padding:12px;
+ border:2px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:5px;box-shadow:4px 4px 0 var(--red);cursor:pointer;transition:.2s}
+.btn:hover{transform:translate(-2px,-3px);box-shadow:7px 7px 0 var(--red)}
+.btn:disabled{opacity:.6;transform:none}
+.toggle{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--green);font-weight:700;cursor:pointer}
+.toggle:hover{text-decoration:underline}
+.back{display:inline-block;margin-top:16px;font-size:13px;color:var(--ink2)}
+/* ===== الدارك مود ===== */
+html.dark{--paper:#0F1713;--card:#15221B;--ink:#EAE5D7;--ink2:#9FB0A5;--line:rgba(234,229,215,.16)}
+html.dark body{background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(234,229,215,.05) 34px 35px)}
+.theme-btn{position:fixed;bottom:22px;left:22px;z-index:110;width:52px;height:52px;border-radius:99px;border:2px solid var(--ink);background:var(--card);font-size:22px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.3);transition:.25s}
+.theme-btn:hover{transform:translateY(-3px)}
+html.dark .field input{background:#1B2C23;color:var(--ink)}
+html.dark .gbtn{background:#1B2C23;color:var(--ink)}
+html.dark .lstamp{background:rgba(21,34,27,.85)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="login-wrap">
+  <form class="login-card" id="loginForm">
+    <div class="lstamp">دفتر جديد ✦</div>
+    <h1>تسجيل الدخول ⚖</h1>
+    <p class="sub">ادخل بحساب Google الحقيقي أو أنشئ حساب ببريدك — بياناتك بتتحفظ تلقائيًا في سجلك.</p>
+    <button type="button" class="gbtn" id="googleBtn">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+      المتابعة بحساب Google
+    </button>
+    <div class="divider"><span>أو بالبريد الإلكتروني</span></div>
+    <div class="err" id="err"></div>
+    <div class="field"><label>البريد الإلكتروني</label><input type="email" id="email" required placeholder="you@gmail.com"></div>
+    <div class="field"><label>كلمة المرور</label>
+      <div class="pw-wrap"><input type="password" id="pass" required minlength="6" placeholder="••••••••"><button type="button" id="eye" aria-label="إظهار">👁</button></div>
+    </div>
+    <button class="btn" id="submitBtn" type="submit">تسجيل الدخول ←</button>
+    <span class="toggle" id="toggleLink">مش معانا؟ أنشئ حساب جديد</span>
+    <a class="back" href="index.html">↩ العودة للمنصة</a>
+  </form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+(function(){
+  var err=document.getElementById('err');
+  function showErr(m){err.textContent='✕ '+m;err.classList.remove('show');void err.offsetWidth;err.classList.add('show');}
+
+  if(window.MZ_ERROR==='CONFIG'){ showErr('لسه ما ضفتش بيانات Firebase جوّه ملف firebase-init.js'); }
+  else if(window.MZ_ERROR==='NET'){ showErr('تحقق من الإنترنت — ملفات Firebase محمّلتش'); }
+  else if(window.MZ_ERROR){ showErr('مشكلة في Firebase: '+window.MZ_ERROR); }
+  else if(location.protocol==='file:'){ showErr('⚠ الموقع شغال كملف — افتحه من Live Server (http) عشان جوجل يشتغل'); }
+
+  var pending=null; try{ pending=JSON.parse(sessionStorage.getItem('mz_pending')||'null'); }catch(e){}
+  if(pending && pending.type==='pay'){
+    err.textContent='✎ سجّل الدخول أولًا عشان تكمل اشتراكك في الكورس';
+    err.classList.add('show');
+  }
+
+  if(!window.MZ_AUTH) return;
+
+  function saveProfile(u){
+    return MZ_DB.collection('users').doc(u.uid).set({
+      name: u.displayName || u.email.split('@')[0],
+      email: u.email,
+      role: u.email.toLowerCase()===window.ADMIN_EMAIL ? 'admin' : 'student',
+      lastLogin: Date.now()
+    },{merge:true}).catch(function(e){console.warn(e);});
+  }
+
+  MZ_AUTH.onAuthStateChanged(function(user){
+    if(!user) return;
+    saveProfile(user).then(function(){
+      if(user.email.toLowerCase()===window.ADMIN_EMAIL){ location.replace('admin.html'); return; }
+      mzCheckDevice(user, function(st){
+        if(st==='blocked'){
+          showErr('الحساب ده مربوط بجهاز تاني — مش ممكن تستخدمه على جهازين في نفس الوقت. تواصل مع الإدارة لفك الربط.');
+          MZ_AUTH.signOut();
+          return;
+        }
+        var pend=null; try{ pend=JSON.parse(sessionStorage.getItem('mz_pending')||'null'); }catch(e){}
+           /* تحديد الوجهة حسب الدور */
+           function route(){
+        var pend=null;try{pend=JSON.parse(sessionStorage.getItem('mz_pending')||'null');}catch(e){}
+        if(pend&&(pend.type==='pay'||pend.type==='bundle')){
+          sessionStorage.removeItem('mz_pending');
+          location.replace(pend.type==='bundle'?'pay.html?type=bundle&id='+pend.id:'pay.html?id='+pend.id);
+          return;
+        }
+        location.replace('index.html');
+      }
+      if(window.MZ_DB){
+        MZ_DB.collection('teachers').where('email','==',user.email.toLowerCase()).get()
+          .then(function(s){if(!s.empty){location.replace('teacher.html');}else{route();}})
+          .catch(route);
+      }else route();
+      });
+    });
+  });
+
+  document.getElementById('googleBtn').onclick=function(){
+    MZ_AUTH.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .catch(function(e){ showErr(arErr(e.code)); });
+  };
+
+  var reg=false;
+  document.getElementById('loginForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var em=document.getElementById('email').value.trim();
+    var pw=document.getElementById('pass').value;
+    var btn=document.getElementById('submitBtn');
+    btn.disabled=true; btn.textContent='ثوانٍ…';
+    var op = reg ? MZ_AUTH.createUserWithEmailAndPassword(em,pw)
+                 : MZ_AUTH.signInWithEmailAndPassword(em,pw);
+    op.catch(function(ex){
+      showErr(arErr(ex.code));
+      btn.disabled=false; btn.textContent = reg?'إنشاء الحساب ←':'تسجيل الدخول ←';
+    });
+  });
+
+  document.getElementById('toggleLink').onclick=function(){
+    reg=!reg;
+    this.textContent = reg ? 'عندك حساب؟ سجّل دخول' : 'مش معانا؟ أنشئ حساب جديد';
+    document.getElementById('submitBtn').textContent = reg ? 'إنشاء الحساب ←' : 'تسجيل الدخول ←';
+    err.classList.remove('show');
+  };
+  document.getElementById('eye').onclick=function(){
+    var p=document.getElementById('pass'); p.type = p.type==='password'?'text':'password';
+  };
+
+  function arErr(code){
+    var map={
+      'auth/invalid-credential':'بيانات الدخول غير صحيحة',
+      'auth/wrong-password':'كلمة المرور غير صحيحة',
+      'auth/user-not-found':'مفيش حساب بالبريد ده — أنشئ حساب أولًا',
+      'auth/email-already-in-use':'البريد ده مسجّل بالفعل — سجّل دخول',
+      'auth/weak-password':'كلمة المرور لازم ٦ حروف على الأقل',
+      'auth/invalid-email':'صيغة البريد غير صحيحة',
+      'auth/too-many-requests':'محاولات كتير — استنى شوية وجرّب',
+      'auth/popup-closed-by-user':'اتقفلت نافذة جوجل قبل الإكمال',
+      'auth/popup-blocked':'المتصفح منع النافذة — اسمح بالنوافذ المنبثقة',
+      'auth/unauthorized-domain':'النطاق ده مش مضاف في Firebase → Authentication → Settings → Authorized domains',
+      'auth/operation-not-supported-in-this-environment':'البيئة دي مش مدعومة — لازم تشغّل الموقع من Live Server (http)',
+      'auth/api-key-not-valid.-please-pass-a-valid-api-key.':'الـ apiKey غلط — راجع firebase-init.js'
+    };
+    return map[code] || 'حصل خطأ غير متوقع — جرّب تاني';
+  }
+})();
+</script>
+<button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع">🌙</button>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';}
+  b.onclick=function(){
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('mz_theme',document.documentElement.classList.contains('dark')?'dark':'light');
+    sync();
+  };
+  sync();
+})();
+</script>
+<body>
+  <script>if(localStorage.getItem('mz_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</html>
