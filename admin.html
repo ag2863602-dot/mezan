@@ -350,8 +350,7 @@ function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));if(window.mzPub
 function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setJobs(l){localStorage.setItem(JKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setTeachers(l){localStorage.setItem(TKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
-function setSocial(o){localStorage.setItem(SKEY,JSON.stringify(o));if(window.mzPublishSoon)mzPublishSoon();}function getBundles(){const raw=localStorage.getItem(BKEY);if(raw===null){localStorage.setItem(BKEY,JSON.stringify(DEFAULT_BUNDLES));return [...DEFAULT_BUNDLES];}try{return JSON.parse(raw)||[];}catch(e){return[];}}
-function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));}
+function setSocial(o){localStorage.setItem(SKEY,JSON.stringify(o));if(window.mzPublishSoon)mzPublishSoon();}
 function getOrders(){try{return JSON.parse(localStorage.getItem('mz_orders')||'[]');}catch(e){return[];}}
 function setOrders(l){localStorage.setItem('mz_orders',JSON.stringify(l));}
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('toasts').appendChild(t);setTimeout(()=>t.remove(),3200);}
