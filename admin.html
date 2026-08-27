@@ -346,7 +346,7 @@ const DEFAULTS=[
 const DEFAULT_BUNDLES=[{id:1,title:'باقة الميزان المجمعة — أساسيات المحاسبة',price:1499,old:2146,courseIds:[1,2,6,10]}];
 
 function getStore(){const raw=localStorage.getItem(KEY);if(raw===null){localStorage.setItem(KEY,JSON.stringify(DEFAULTS));return [...DEFAULTS];}try{return JSON.parse(raw)||[];}catch(e){return [...DEFAULTS];}}
-function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
+function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));}
 function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setJobs(l){localStorage.setItem(JKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setTeachers(l){localStorage.setItem(TKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
