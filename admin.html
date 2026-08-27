@@ -346,12 +346,11 @@ const DEFAULTS=[
 const DEFAULT_BUNDLES=[{id:1,title:'باقة الميزان المجمعة — أساسيات المحاسبة',price:1499,old:2146,courseIds:[1,2,6,10]}];
 
 function getStore(){const raw=localStorage.getItem(KEY);if(raw===null){localStorage.setItem(KEY,JSON.stringify(DEFAULTS));return [...DEFAULTS];}try{return JSON.parse(raw)||[];}catch(e){return [...DEFAULTS];}}
-function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));}
+function setStore(l){localStorage.setItem(KEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setJobs(l){localStorage.setItem(JKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
 function setTeachers(l){localStorage.setItem(TKEY,JSON.stringify(l));if(window.mzPublishSoon)mzPublishSoon();}
-function setSocial(o){localStorage.setItem(SKEY,JSON.stringify(o));if(window.mzPublishSoon)mzPublishSoon();}}
-function getBundles(){const raw=localStorage.getItem(BKEY);if(raw===null){localStorage.setItem(BKEY,JSON.stringify(DEFAULT_BUNDLES));return [...DEFAULT_BUNDLES];}try{return JSON.parse(raw)||[];}catch(e){return[];}}
+function setSocial(o){localStorage.setItem(SKEY,JSON.stringify(o));if(window.mzPublishSoon)mzPublishSoon();}function getBundles(){const raw=localStorage.getItem(BKEY);if(raw===null){localStorage.setItem(BKEY,JSON.stringify(DEFAULT_BUNDLES));return [...DEFAULT_BUNDLES];}try{return JSON.parse(raw)||[];}catch(e){return[];}}
 function setBundles(l){localStorage.setItem(BKEY,JSON.stringify(l));}
 function getOrders(){try{return JSON.parse(localStorage.getItem('mz_orders')||'[]');}catch(e){return[];}}
 function setOrders(l){localStorage.setItem('mz_orders',JSON.stringify(l));}
