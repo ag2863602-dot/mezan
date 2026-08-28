@@ -314,7 +314,7 @@ html.dark .lesson-add input{background:#1B2C23;color:var(--ink)}
   <section class="panel" style="margin-top:30px;margin-bottom:80px">
     <div class="tp-head"><h3>🧾 طلبات الاشتراك — التفعيل</h3><span style="margin-inline-start:auto;display:flex;gap:8px"><button class="alink" id="resetDeviceBtn" type="button">فك ربط جهاز ♻</button><button class="alink" id="refreshOrders" type="button">تحديث ↻</button></span></div>
     <div class="tscroll">
-      <table><thead><tr><th>البريد</th><th>الطلب</th><th>المبلغ</th><th>الطريقة</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="oTbody"></tbody></table>
+      <table><thead><tr><th>البريد</th><th>الطلب</th><th>المبلغ</th><th>الطريقة</th><th>حوّل من / الاسم</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="oTbody"></tbody></table>
       <div class="tempty" id="oEmpty" style="display:none">مفيش طلبات لسه</div>
     </div>
   </section>
@@ -536,7 +536,7 @@ $('#bTbody').addEventListener('click',e=>{
 function paintOrders(rows){
   $('#oEmpty').style.display=rows.length?'none':'block';
   $('#oTbody').innerHTML=rows.map(o=>`<tr>
-    <td class="mono">${o.email||''}</td><td>${o.course||''}</td><td class="mono">${fmt(o.amount||0)}</td><td>${o.method||''}</td>
+    <td class="mono">${o.email||''}</td><td>${o.course||''}</td><td class="mono">${fmt(o.amount||0)}</td><td>${o.method||''}</td><td class="mono" style="max-width:170px;white-space:normal">${o.ref||'—'}${o.note?`<br><span style="color:var(--ink2);font-family:'IBM Plex Sans Arabic'">${o.note}</span>`:''}</td>
     <td>${o.status==='active'?'<span style="color:var(--green);font-weight:700">مفعّل ✓</span>':(o.status==='cancelled'?'ملغي':'<span style="color:var(--red);font-weight:700">معلّق</span>')}</td>
     <td class="actions">
       ${o.status!=='active'?`<button class="abtn edit" data-act="active" data-fid="${o.fid||''}" data-lid="${o.lid||''}">تفعيل ✓</button>`:''}
