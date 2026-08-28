@@ -931,6 +931,12 @@ addEventListener('keydown',e=>{if(e.key==='Escape')openCart(false);});
     sync();
   })();
   </script>
+  <script>
+    if(window.mzSync){window.mzSync(function(changed){
+      if(changed&&!sessionStorage.getItem('mz_reloaded')){sessionStorage.setItem('mz_reloaded','1');location.reload();}
+      else sessionStorage.removeItem('mz_reloaded');
+    });}
+    </script>
 <body>
   <script>if(localStorage.getItem('mz_theme')==='dark')document.documentElement.classList.add('dark');</script>
 </html>
