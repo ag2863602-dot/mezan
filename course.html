@@ -140,6 +140,7 @@ if(!c){
 
   /* زر الاشتراك */
   document.getElementById('subBtn').onclick=function(){
+    if(+c.price===0){document.querySelector('.video-panel').scrollIntoView({behavior:'smooth'});return;}
     var user=window.MZ_AUTH?MZ_AUTH.currentUser:null;
     if(!user){
       sessionStorage.setItem('mz_pending',JSON.stringify({type:'pay',id:c.id}));
@@ -218,7 +219,9 @@ if(!c){
       location.href='pay.html?id='+c.id;
     };
   }
-  if(!window.MZ_AUTH){
+  if(+c.price===0){
+    showLessons();
+  }else if(!window.MZ_AUTH){
     lockBox('المحتوى مقفول — سجّل الدخول وفعّل اشتراكك عشان تفتح الحصص.');
   }else{
     MZ_AUTH.onAuthStateChanged(function(u){
