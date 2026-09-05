@@ -105,8 +105,7 @@ html.dark .resources-btn{color:#64B5F6;border-color:#64B5F6}
     if(changed&&!sessionStorage.getItem('mz_reloaded')){sessionStorage.setItem('mz_reloaded','1');location.reload();}
     else sessionStorage.removeItem('mz_reloaded');
   });}
-  </script>
-<script>
+  </script><script>
 'use strict';
 var fmt=function(n){return n.toLocaleString('ar-EG');};
 function decLink(s){ if(!s)return s; if(String(s).indexOf('b64:')===0){ try{return decodeURIComponent(escape(atob(String(s).slice(4))));}catch(e){return '';} } return s; }

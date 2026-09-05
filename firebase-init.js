@@ -53,7 +53,14 @@ window.mzSync=function(cb){
   MZ_DB.collection('data').doc('content').get().then(function(s){
     if(!s.exists){cb(false);return;}
     var d=s.data(),changed=false;
-    function put(k,v){if(v){var nxt=JSON.stringify(v);if(localStorage.getItem(k)!==nxt){localStorage.setItem(k,nxt);changed=true;}}}
+    function put(k,v){
+      if(!v)return;
+      try{
+        var nxt=JSON.stringify(v);
+        if(nxt.length>3000000)return;
+        if(localStorage.getItem(k)!==nxt){localStorage.setItem(k,nxt);changed=true;}
+      }catch(e){}
+    }
     put('meezan_courses_v2',d.courses);put('meezan_bundles_v1',d.bundles);put('meezan_jobs_v1',d.jobs);
     put('meezan_teachers_v1',d.teachers);put('meezan_social_v1',d.social);
     cb(changed);
