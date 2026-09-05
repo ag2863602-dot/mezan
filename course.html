@@ -101,16 +101,18 @@ html.dark .resources-btn{color:#64B5F6;border-color:#64B5F6}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="firebase-init.js"></script>
 <script>
-  if(window.mzSync){window.mzSync(function(changed){
-    if(!changed)return;
-    try{
-      if(typeof COURSES!=='undefined'&&typeof getStore==='function'){COURSES=getStore();}
-      if(typeof render==='function')render();
-      if(typeof renderBundles==='function')renderBundles();
-      if(typeof renderJobs==='function')renderJobs();
-    }catch(e){}
-  });}
-  </script>'use strict';
+if(window.mzSync){window.mzSync(function(changed){
+  if(!changed)return;
+  try{
+    if(typeof COURSES!=='undefined'&&typeof getStore==='function'){COURSES=getStore();}
+    if(typeof render==='function')render();
+    if(typeof renderBundles==='function')renderBundles();
+    if(typeof renderJobs==='function')renderJobs();
+  }catch(e){}
+});}
+</script>
+<script>
+'use strict';
 var fmt=function(n){return n.toLocaleString('ar-EG');};
 function decLink(s){ if(!s)return s; if(String(s).indexOf('b64:')===0){ try{return decodeURIComponent(escape(atob(String(s).slice(4))));}catch(e){return '';} } return s; }
 function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('toasts').appendChild(t);setTimeout(function(){t.remove();},3200);}
@@ -255,7 +257,7 @@ document.addEventListener('dragstart',function(e){e.preventDefault();});
 <script>
 (function(){
   var b=document.getElementById('themeBtn');
-  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';}
+  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'';}
   b.onclick=function(){
     document.documentElement.classList.toggle('dark');
     localStorage.setItem('mz_theme',document.documentElement.classList.contains('dark')?'dark':'light');
