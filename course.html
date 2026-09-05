@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الكورس — مِيزان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F0E4;--card:#FFFDF6;--ink:#16352A;--ink2:#4A6157;--red:#C6402E;--green:#1E7A50;--gold:#C9A227;--line:rgba(22,53,42,.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--ink);background:var(--paper);
+ background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(22,53,42,.065) 34px 35px);line-height:1.7;min-height:100vh;
+ -webkit-user-select:none;-moz-user-select:none;user-select:none}
+h1,h2,h3{font-family:'Changa'}
+.mono{font-family:'IBM Plex Mono',monospace}
+img{display:block}
+.wrap{max-width:1000px;margin-inline:auto;padding-inline:24px}
+.noise{position:fixed;inset:0;pointer-events:none;opacity:.05;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.topbar{background:var(--dark);color:var(--paper);padding:14px 0;border-bottom:2px solid var(--ink)}
+.topbar .wrap{display:flex;align-items:center;gap:14px}
+.topbar .logo{font-family:'Changa';font-weight:800;font-size:22px}
+.topbar a{color:var(--gold);font-size:14px;margin-inline-start:auto;text-decoration:none}
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 rgba(22,53,42,.13);padding:26px}
+.hero{display:grid;grid-template-columns:.9fr 1.1fr;gap:26px;margin:44px 0 26px;align-items:center}
+.hero img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1.5px solid var(--ink);border-radius:6px}
+.cmeta{font-family:'IBM Plex Mono';font-size:12.5px;color:var(--red);font-weight:700;margin-bottom:6px}
+.hero h1{font-size:clamp(24px,3.4vw,36px);margin-bottom:8px}
+.cinfo{font-family:'IBM Plex Mono';font-size:13px;color:var(--ink2);display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.crate{color:var(--gold);margin-bottom:14px}
+.cprice{font-family:'Changa';font-weight:800;font-size:32px;margin-bottom:16px}
+.cprice s{font-size:15px;color:var(--ink2);font-family:'IBM Plex Mono';font-weight:400}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Changa';font-weight:700;font-size:16px;
+ padding:11px 24px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--red);border-radius:4px;cursor:pointer;transition:.2s;text-decoration:none}
+.btn:hover{transform:translate(-2px,-3px);box-shadow:7px 7px 0 var(--red)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:4px 4px 0 rgba(22,53,42,.25)}
+.cinst{margin-top:14px;font-size:13.5px;color:var(--ink2)}
+.video-panel{margin-bottom:80px}
+.video-panel h2{border-bottom:4px double var(--ink);padding-bottom:10px;margin-bottom:18px}
+.video-box iframe,.video-box video{width:100%;aspect-ratio:16/9;border:2px solid var(--ink);border-radius:6px;background:#000;display:block}
+.vlock{aspect-ratio:16/9;border:2px dashed var(--ink);border-radius:6px;display:grid;place-items:center;text-align:center;color:var(--ink2);font-size:16px;background:#F1E9D6;padding:20px}
+.lessons-grid{display:grid;grid-template-columns:280px 1fr;gap:22px;align-items:start}
+.lessons-nav{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow-y:auto}
+.lnav{border:1.5px solid var(--ink);background:#fff;border-radius:6px;padding:10px 14px;font-family:'Changa';font-weight:600;font-size:14.5px;cursor:pointer;text-align:right;display:flex;gap:8px;align-items:center;transition:.2s}
+.lnav .mono{color:var(--red)}
+.lnav:hover{transform:translateX(-3px)}
+.lnav.on{background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--gold)}
+.lnav.on .mono{color:var(--gold)}
+.cur-lesson{font-size:18px;margin-bottom:10px;color:var(--red)}
+.lesson-cta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.interview-btn{border-color:var(--gold);color:#8a6d10;box-shadow:4px 4px 0 rgba(201,162,39,.4)}
+.interview-btn:hover{box-shadow:7px 7px 0 rgba(201,162,39,.4)}
+.resources-btn{border-color:#1976D2;color:#1976D2;box-shadow:4px 4px 0 rgba(25,118,210,.35)}
+.resources-btn:hover{box-shadow:7px 7px 0 rgba(25,118,210,.35)}
+.toasts{position:fixed;bottom:24px;right:50%;transform:translateX(50%);z-index:120;display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{background:var(--ink);color:var(--paper);padding:12px 24px;border-radius:6px;box-shadow:5px 5px 0 var(--gold);font-size:14.5px;animation:fadeUp .35s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.theme-btn{position:fixed;bottom:22px;left:22px;z-index:110;width:52px;height:52px;border-radius:99px;border:2px solid var(--ink);background:var(--card);font-size:22px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.3);transition:.25s}
+.theme-btn:hover{transform:translateY(-3px)}
+html.dark{--paper:#0F1713;--card:#15221B;--ink:#EAE5D7;--ink2:#9FB0A5;--line:rgba(234,229,215,.16)}
+html.dark body{background-image:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(234,229,215,.05) 34px 35px)}
+html.dark .vlock{background:#1B2C23;color:var(--ink2)}
+html.dark .lnav{background:#1B2C23}
+html.dark .interview-btn{color:var(--gold)}
+html.dark .resources-btn{color:#64B5F6;border-color:#64B5F6}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.lessons-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script>if(localStorage.getItem('mz_theme')==='dark')document.documentElement.classList.add('dark');</script>
+<div class="noise"></div>
+<header class="topbar"><div class="wrap"><span class="logo">⚖ مِيزَان</span><a href="index.html">↩ العودة للمنصة</a></div></header>
+
+<main class="wrap">
+  <section class="panel hero" id="heroBox"></section>
+  <section class="panel video-panel">
+    <h2>🎬 حصص الكورس</h2>
+    <div class="lessons-grid">
+      <aside class="lessons-nav" id="lessonsNav"></aside>
+      <div>
+        <h3 class="cur-lesson" id="lessonTitle"></h3>
+        <div class="video-box" id="videoBox"></div>
+        <div class="lesson-cta">
+          <button type="button" class="btn ghost" id="lessonPrac">التطبيق العملي ✎</button>
+          <button type="button" class="btn ghost interview-btn" id="lessonInterview">🎤 مقابلة عمل</button>
+          <button type="button" class="btn ghost resources-btn" id="lessonResources">📥 تنزيل البيانات</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع">🌙</button>
+<div class="toasts" id="toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+if(window.mzSync){window.mzSync(function(changed){
+  if(!changed)return;
+  try{
+    if(typeof COURSES!=='undefined'&&typeof getStore==='function'){COURSES=getStore();}
+    if(typeof render==='function')render();
+    if(typeof renderBundles==='function')renderBundles();
+    if(typeof renderJobs==='function')renderJobs();
+  }catch(e){}
+});}
+</script>
+<script>
+'use strict';
+var fmt=function(n){return n.toLocaleString('ar-EG');};
+function decLink(s){ if(!s)return s; if(String(s).indexOf('b64:')===0){ try{return decodeURIComponent(escape(atob(String(s).slice(4))));}catch(e){return '';} } return s; }
+function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('toasts').appendChild(t);setTimeout(function(){t.remove();},3200);}
+var KEY='meezan_courses_v2';
+function getStore(){var raw=localStorage.getItem(KEY);if(raw===null)return[];try{return JSON.parse(raw)||[];}catch(e){return[];}}
+function getOrders(){try{return JSON.parse(localStorage.getItem('mz_orders')||'[]');}catch(e){return[];}}
+
+var id=new URLSearchParams(location.search).get('id');
+var c=getStore().find(function(x){return String(x.id)===String(id);});
+
+if(!c){
+  document.getElementById('heroBox').innerHTML='<p>الكورس مش موجود — <a href="index.html">ارجع للمنصة</a>.</p>';
+  document.querySelector('.video-panel').style.display='none';
+}else{
+  document.title=c.title+' — مِيزان';
+  document.getElementById('heroBox').innerHTML=
+    '<img src="'+c.img+'" alt="">'+
+    '<div>'+
+      '<div class="cmeta">'+c.cat+' — المستوى: '+c.lvl+'</div>'+
+      '<h1>'+c.title+'</h1>'+
+      '<div class="cinfo"><span>⏱ '+fmt(c.hours)+' ساعة</span><span>✎ '+fmt(c.lessons)+' درسًا</span><span>◉ '+fmt(c.students||0)+' متدرب</span></div>'+
+      (c.reviews>0?'<div class="crate">★★★★★ <b>'+c.rating+'</b> ('+fmt(c.reviews)+' تقييم)</div>':'<div class="crate" style="color:var(--green)">✦ كورس جديد</div>')+
+      '<div class="cprice">'+(+c.price>0?fmt(c.price)+' ج.م':'مجاني ✦')+(c.old?' <s>'+fmt(c.old)+' ج.م</s>':'')+'</div>'+
+      '<div class="cta-row">'+
+        '<button class="btn" id="subBtn">اشتراك ←</button>'+
+        '<a class="btn ghost" id="pracBtn">التطبيق العملي ✎</a>'+
+      '</div>'+
+      '<div class="cinst">المدرّب: '+c.inst+'</div>'+
+    '</div>';
+
+  /* زر الاشتراك */
+  document.getElementById('subBtn').onclick=function(){
+    if(+c.price===0){document.querySelector('.video-panel').scrollIntoView({behavior:'smooth'});return;}
+    var user=window.MZ_AUTH?MZ_AUTH.currentUser:null;
+    if(!user){
+      sessionStorage.setItem('mz_pending',JSON.stringify({type:'pay',id:c.id}));
+      toast('سجّل الدخول أولًا ✎');
+      setTimeout(function(){location.href='login.html';},600);
+      return;
+    }
+    location.href='pay.html?id='+c.id;
+  };
+
+  /* زر التطبيق في الهيدر */
+  var pb=document.getElementById('pracBtn');
+  pb.removeAttribute('href');
+  if(c.practical){ pb.onclick=function(){window.open(decLink(c.practical),'_blank');}; }
+  else{ pb.onclick=function(){toast('لينك التطبيق هيُضاف من لوحة الإدارة ✎');}; }
+
+  /* ===== الحصص + القفل ===== */
+  var panel=document.querySelector('.video-panel');
+  function accessStatus(email,courseId,cb){
+    function ev(list){
+      var st=null;
+      for(var i=0;i<list.length;i++){var o=list[i];
+        var match=o.email===email&&((o.kind==='course'&&o.courseId==courseId)||(o.kind==='bundle'&&o.courseIds&&o.courseIds.map(Number).indexOf(Number(courseId))>-1));
+        if(match){ if(o.status==='active')return 'active'; if(o.status==='pending')st='pending'; }
+      }
+      return st;
+    }
+    var local=ev(getOrders());
+    if(local==='active')return cb('active');
+    if(window.MZ_DB){
+      MZ_DB.collection('orders').where('email','==',email).get().then(function(s){
+        var arr=[];s.forEach(function(d){arr.push(d.data());});
+        cb(ev(arr)||local);
+      }).catch(function(){cb(local);});
+    }else cb(local);
+  }
+  function embed(v){
+    v=decLink(v);
+    if(!v)return '<div class="vlock">🎬 فيديو الحصة هيُضاف من لوحة الإدارة</div>';
+    var m=v.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+    if(m)return '<iframe src="https://www.youtube.com/embed/'+m[1]+'" title="فيديو الحصة" allowfullscreen></iframe>';
+    return '<video controls src="'+v+'"></video>';
+  }
+  function showLessons(){
+    var lessons=(c.lessons&&c.lessons.length)?c.lessons:(c.video?[{title:'الفيديو الأساسي',video:c.video,practical:c.practical||''}]:[]);
+    var nav=document.getElementById('lessonsNav'),vb=document.getElementById('videoBox'),
+        lt=document.getElementById('lessonTitle'),lp=document.getElementById('lessonPrac'),
+        li=document.getElementById('lessonInterview'),lr=document.getElementById('lessonResources');
+    if(c.interview){li.style.display='';li.onclick=function(){window.open(decLink(c.interview),'_blank');};}else{li.style.display='none';}
+    if(c.resources){lr.style.display='';lr.onclick=function(){window.open(decLink(c.resources),'_blank');};}else{lr.style.display='none';}
+    if(!lessons.length){
+      nav.innerHTML='<div class="vlock" style="aspect-ratio:auto;padding:22px">لسه مفيش حصص — بتتضاف من لوحة الإدارة ✎</div>';
+      vb.innerHTML='<div class="vlock">اختار حصة من القائمة لتشغيل الفيديو</div>';
+      lp.style.display='none';
+    }else{
+      nav.innerHTML=lessons.map(function(l,i){return '<button class="lnav'+(i===0?' on':'')+'" data-l="'+i+'"><span class="mono">'+fmt(i+1)+'</span> '+l.title+'</button>';}).join('');
+      var pick=function(i){
+        var l=lessons[i];
+        lt.textContent='▚ '+l.title;
+        vb.innerHTML=embed(l.video);
+        if(l.practical){lp.style.display='';lp.onclick=function(){window.open(decLink(l.practical),'_blank');};}
+        else{lp.style.display='none';}
+        nav.querySelectorAll('.lnav').forEach(function(b){b.classList.toggle('on',+b.dataset.l===i);});
+      };
+      nav.addEventListener('click',function(e){var b=e.target.closest('.lnav');if(b)pick(+b.dataset.l);});
+      pick(0);
+    }
+  }
+  function lockBox(msg){
+    panel.innerHTML='<h2>🎬 حصص الكورس</h2><div class="vlock" style="aspect-ratio:auto;padding:36px">🔒 '+msg+'<br><br><button class="btn" id="unlockSub">اشترك / فعّل الاشتراك ←</button></div>';
+    document.getElementById('unlockSub').onclick=function(){
+      if(!window.MZ_AUTH||!MZ_AUTH.currentUser){
+        sessionStorage.setItem('mz_pending',JSON.stringify({type:'pay',id:c.id}));
+        toast('سجّل الدخول أولًا ✎');location.href='login.html';return;
+      }
+      location.href='pay.html?id='+c.id;
+    };
+  }
+  if(+c.price===0){
+    showLessons();
+  }else if(!window.MZ_AUTH){
+    lockBox('المحتوى مقفول — سجّل الدخول وفعّل اشتراكك عشان تفتح الحصص.');
+  }else{
+    MZ_AUTH.onAuthStateChanged(function(u){
+      if(!u){ lockBox('المحتوى مقفول — سجّل الدخول وفعّل اشتراكك عشان تفتح الحصص.'); return; }
+      if(u.email.toLowerCase()===window.ADMIN_EMAIL){ showLessons(); return; }
+      mzCheckDevice(u,function(ds){
+        if(ds==='blocked'){ lockBox('الحساب ده مربوط بجهاز تاني — مش بيفتح على جهازين في نفس الوقت. تواصل مع الإدارة لفك الربط.'); return; }
+        accessStatus(u.email,c.id,function(st){
+          if(st==='active'){ showLessons(); }
+          else if(st==='pending'){ lockBox('طلبك لسه قيد المراجعة ⏳ — أول ما الإدارة تفعّل الاشتراك هيتفتح المحتوى تلقائيًا.'); }
+          else{ lockBox('المحتوى مقفول — اشترك في الكورس أو في باقة مجمعة شامله عشان تفتح الحصص.'); }
+        });
+      });
+    });
+  }
+}
+
+/* ===== حماية المحتوى من النسخ ===== */
+document.addEventListener('contextmenu',function(e){e.preventDefault();toast('🔒 الحماية مفعّلة — النسخ معطّل');});
+document.addEventListener('keydown',function(e){
+  var k=(e.key||'').toUpperCase();
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','K'].indexOf(k)>-1)||(e.ctrlKey&&['U','S','P','C','A'].indexOf(k)>-1)){
+    e.preventDefault();
+  }
+});
+document.addEventListener('dragstart',function(e){e.preventDefault();});
+</script>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  function sync(){b.textContent=document.documentElement.classList.contains('dark')?'☀️':'';}
+  b.onclick=function(){
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('mz_theme',document.documentElement.classList.contains('dark')?'dark':'light');
+    sync();
+  };
+  sync();
+})();
+</script>
+</body>
+</html>
