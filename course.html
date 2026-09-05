@@ -102,11 +102,15 @@ html.dark .resources-btn{color:#64B5F6;border-color:#64B5F6}
 <script src="firebase-init.js"></script>
 <script>
   if(window.mzSync){window.mzSync(function(changed){
-    if(changed&&!sessionStorage.getItem('mz_reloaded')){sessionStorage.setItem('mz_reloaded','1');location.reload();}
-    else sessionStorage.removeItem('mz_reloaded');
+    if(!changed)return;
+    try{
+      if(typeof COURSES!=='undefined'&&typeof getStore==='function'){COURSES=getStore();}
+      if(typeof render==='function')render();
+      if(typeof renderBundles==='function')renderBundles();
+      if(typeof renderJobs==='function')renderJobs();
+    }catch(e){}
   });}
-  </script><script>
-'use strict';
+  </script>'use strict';
 var fmt=function(n){return n.toLocaleString('ar-EG');};
 function decLink(s){ if(!s)return s; if(String(s).indexOf('b64:')===0){ try{return decodeURIComponent(escape(atob(String(s).slice(4))));}catch(e){return '';} } return s; }
 function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('toasts').appendChild(t);setTimeout(function(){t.remove();},3200);}

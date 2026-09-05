@@ -861,12 +861,15 @@ addEventListener('keydown',e=>{if(e.key==='Escape')openCart(false);});
 <script src="firebase-init.js"></script>
 <script>
   if(window.mzSync){window.mzSync(function(changed){
-    if(changed&&!sessionStorage.getItem('mz_reloaded')){
-      sessionStorage.setItem('mz_reloaded','1');
-      location.reload();
-    }
+    if(!changed)return;
+    try{
+      if(typeof COURSES!=='undefined'&&typeof getStore==='function'){COURSES=getStore();}
+      if(typeof render==='function')render();
+      if(typeof renderBundles==='function')renderBundles();
+      if(typeof renderJobs==='function')renderJobs();
+    }catch(e){}
   });}
-  </script>(function(){
+  </script>  </script>(function(){
   function apply(user){
     var logged = !!user;
     document.querySelectorAll('.js-login').forEach(function(el){ el.style.display = logged ? 'none' : ''; });

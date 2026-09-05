@@ -110,11 +110,15 @@ html.dark .bank-card b{background:#1B2C23}
 <script src="firebase-init.js"></script>
 <script>
   if(window.mzSync){window.mzSync(function(changed){
-    if(changed&&!sessionStorage.getItem('mz_reloaded')){sessionStorage.setItem('mz_reloaded','1');location.reload();}
-    else sessionStorage.removeItem('mz_reloaded');
+    if(!changed)return;
+    try{
+      if(typeof COURSES!=='undefined'&&typeof getStore==='function'){COURSES=getStore();}
+      if(typeof render==='function')render();
+      if(typeof renderBundles==='function')renderBundles();
+      if(typeof renderJobs==='function')renderJobs();
+    }catch(e){}
   });}
-  </script><script>
-'use strict';
+  </script>'use strict';
 const $ = s => document.querySelector(s);
 const fmt = n => n.toLocaleString('ar-EG');
 
